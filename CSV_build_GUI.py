@@ -41,5 +41,6 @@ class Application(Frame):
 
 root = Tk()
 app = Application(master=root)
+root.geometry('{}x{}'.format(500, 500))
 app.mainloop()
 root.destroy()
