@@ -18,6 +18,7 @@ class ExtractCSV:
                             FROM barkieshauling_2016_2017
                             WHERE date_entered::date >= %s AND date_entered::date <%s;""",(dt.date(self.year,self.month,1),dt.date(self.year,self.month+1,1)))
         full_DB_list = self.cur.fetchall()
+        Gov_DB_list =
         # for row in full_DB_list:
         #     print(row[0])
         # print(len(full_DB_list))
