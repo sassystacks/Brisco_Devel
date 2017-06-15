@@ -1,4 +1,5 @@
 import datetime as dt
+import csv
 
 class ExtractCSV:
 
@@ -9,7 +10,7 @@ class ExtractCSV:
         self.connect_instance = connect_instance
         self.cur = connect_instance.crsr()
 
-    def TestPrint(self):
+    def WriteCSV(self):
         # date1 = dt.date(self.year,self.month,1)
         # date2 = dt.date(self.year,self.month+1,1)
         # exec_statement = """SELECT * from {self.sheet_name}"""
@@ -17,6 +18,9 @@ class ExtractCSV:
                             FROM barkieshauling_2016_2017
                             WHERE date_entered::date >= %s AND date_entered::date <%s;""",(dt.date(self.year,self.month,1),dt.date(self.year,self.month+1,1)))
         full_DB_list = self.cur.fetchall()
-        for row in full_DB_list:
-            print(row[0])
-        print(len(full_DB_list))
+        # for row in full_DB_list:
+        #     print(row[0])
+        # print(len(full_DB_list))
+        with open(self.fname, "wb") as f:
+            writer = csv.writer(f)
+            writer.writerows(full_DB_list)
