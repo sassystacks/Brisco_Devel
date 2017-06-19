@@ -18,10 +18,10 @@ class ExtractCSV:
                             FROM barkieshauling_2016_2017
                             WHERE date_entered::date >= %s AND date_entered::date <%s;""",(dt.date(self.year,self.month,1),dt.date(self.year,self.month+1,1)))
         full_DB_list = self.cur.fetchall()
-        
-        # for row in full_DB_list:
-        #     print(row[0])
-        # print(len(full_DB_list))
+        millnum=8641
+        indx_csv_DB1 = [1,6,7]
+        indx_csv_DB2 = [8,2,14,15,16,4,3]
+
         with open(self.fname, "wb") as f:
             writer = csv.writer(f)
-            writer.writerows(full_DB_list)
+            writer.writerows(csv_list)
