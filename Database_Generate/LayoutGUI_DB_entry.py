@@ -1,30 +1,8 @@
 from Tkinter import *
 import Tkinter, Tkconstants, tkFileDialog
-import os
-from Connect_Brisco_DB import Connect_DB
-from extractCSV import ExtractCSV
-from datetime import datetime, date, time
+
 from PIL import Image, ImageTk
 
-def Create_CSV():
-    dirPrint =Dir_entry.get()
-    t_month = root.var1.get()
-    month_num = root.DD_L_month.index(t_month)+1
-    year_num = int(root.Year_entry.get())
-    Fname_entry.delete(0,'end')
-    s = "_"
-    t_year = root.Year_entry.get()
-    seq = ("Gov","Barkies",t_month,t_year,"CSV")
-    t_fname1 = s.join(seq)
-    t_fname2 = ".csv"
-    t_fname = t_fname1 + t_fname2
-    Fname_entry.insert(0,t_fname)
-    full_file = os.path.join(dirPrint,t_fname)
-    print(full_file)
-    print(month_num)
-    print(year_num)
-    A=ExtractCSV(root.instance_db,t_fname,month_num,year_num)
-    A.WriteCSV()
 
 
 def Browse_dir():
@@ -44,7 +22,6 @@ def Create_DropDown():
 
 # B = ExtractCSV(A,'test.csv',11,2016)
 root = Tk()
-root.instance_db = Connect_DB('postgres','postgres','localhost','Boom_boom1')
 root.geometry("500x500")
 cwd = os.getcwd()
 
@@ -53,11 +30,23 @@ tk_img = ImageTk.PhotoImage(img)
 
 # Label Widgets
 label_image = Label(root,image=tk_img,borderwidth=2,relief='groove')
-label_year = Label(root,text ="Year")
-label_month = Label(root,text ="Month")
-label_day = Label(root,text ="Day")
-label_folder = Label(root,text ="Folder")
-label_Fname = Label(root, text="Filename")
+label_date = Label(root,text ="Date")
+label_popNum = Label(root,text ="Pop. Load Slip#")
+label_popNumCount = Label(root,text ="Pop. Count")
+label_SampleLoad = Label(root,text ="Sample Loads")
+label_TM9 = Label(root, text="TM9/Ticket #")
+label_owner = Label(root, text="Owner")
+label_FMA = Label(root, text="Disposition/FMA #")
+label_workingCircle= Label(root, text="Working Circle")
+label_BlockNum = Label(root, text="Block #")
+label_loggingCo = Label(root, text="Logging Co.")
+label_TruckPlate = Label(root, text="Truck License Plate #")
+label_TruckNum= Label(root, text="Truck #")
+label_TruckAxle = Label(root, text="Truck Axle")
+label_gross = Label(root, text="Gross Weight")
+label_tare = Label(root, text="Tare Weight")
+label_net = Label(root, text="Net Weight")
+
 
 # Button widgets
 button_printName = Button(root, text="Create CSV",command=Create_CSV,bg='green')
