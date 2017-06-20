@@ -36,6 +36,7 @@ label_gross = Label(root, text="Gross Weight")
 label_tare = Label(root, text="Tare Weight")
 label_net = Label(root, text="Net Weight")
 label_pcs = Label(root, text="Pieces")
+label_hauledBy = Label(root, text = "Hauled by")
 
 # labels that change with weight entered
 textVarGross = "Temporary Place Holder"
@@ -45,6 +46,10 @@ textVarNet = "Temporary Place Holder"
 label_scaleGross = Label(root,text=textVarGross)
 label_scaleTare = Label(root,text=textVarTare )
 label_scaleNet = Label(root,text=textVarNet)
+
+# Buttons
+button_weighIn = Button(root, text="Weigh In",bg='green')
+button_weighOut = Button(root, text="Weigh Out",bg='green')
 
 # Drop Down Menus
 # Generate Time and Date
@@ -86,11 +91,12 @@ logCo_combo_val = StringVar()
 truckLicense_combo_val = StringVar()
 truckNum_combo_val = StringVar()
 axle_combo_val = StringVar()
+hauledBy_combo_val = StringVar()
 
 # 1st row combobox inisialize
 owner_combo = ttk.Combobox(root,textvariable = owner_combo_val)
 FMA_combo = ttk.Combobox(root,textvariable = FMA_combo_val)
-
+hauledBy_combo = ttk.Combobox(root,textvariable = hauledBy_combo_val)
 # 2nd Row combobox initialize
 wCircle_combo = ttk.Combobox(root,textvariable = wCircle_combo_val)
 block_combo = ttk.Combobox(root,textvariable = block_combo_val)
@@ -115,7 +121,8 @@ owner_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
 columnum = columnum+1
 FMA_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
 columnum = columnum+1
-
+hauledBy_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
+columnum = columnum+1
 
 # 4th Row
 columnum = 0
@@ -133,8 +140,6 @@ axle_combo.grid(row = 4, column = columnum,sticky='nwe',pady=(0,pady_val))
 columnum = columnum+1
 pcs_entry.grid(row = 4, column = columnum,sticky='nwe',pady=(0,pady_val))
 columnum = columnum+1
-
-#initial values in entry boxes
 
 #enlarge Text boxes
 
@@ -163,7 +168,8 @@ label_owner.grid(row=1,column=columnum )
 columnum = columnum+1
 label_FMA.grid(row=1,column=columnum )
 columnum = columnum+1
-
+label_hauledBy.grid(row=1,column=columnum )
+columnum = columnum+1
 #1st row Emtry and Combobox
 
 
@@ -198,4 +204,13 @@ label_scaleTare.grid(row=6,column=columnum)
 columnum = columnum+1
 label_scaleNet.grid(row=6,column=columnum)
 columnum = columnum+1
+
+
+# Buttons
+columnum = 0
+button_weighIn.grid(row=7,column=columnum,pady=100)
+columnum = columnum+1
+button_weighOut.grid(row=7,column=columnum,pady=100)
+
+# Main loop keep at bottom
 root.mainloop()
