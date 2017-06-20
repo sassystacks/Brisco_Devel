@@ -1,9 +1,8 @@
 from Tkinter import *
+import ttk
 import Tkinter, Tkconstants, tkFileDialog
 
 from PIL import Image, ImageTk
-
-
 
 def Browse_dir():
     directory = tkFileDialog.askdirectory()
@@ -23,7 +22,7 @@ def Create_DropDown():
 # B = ExtractCSV(A,'test.csv',11,2016)
 root = Tk()
 root.geometry("500x500")
-cwd = os.getcwd()
+
 
 img = Image.open("Brisco_logo.png")
 tk_img = ImageTk.PhotoImage(img)
@@ -49,40 +48,77 @@ label_net = Label(root, text="Net Weight")
 
 
 # Button widgets
-button_printName = Button(root, text="Create CSV",command=Create_CSV,bg='green')
-Dir_to_Save = Button(root, text = "Browse", command=Browse_dir)
 
-# text entry Widgets
-Dir_entry = Entry(root)
-root.Year_entry = Entry(root)
-Fname_entry = Entry(root)
+# combobox initial val
+TM9_combo_val = StringVar()
+wCircle_combo_val = StringVar()
+block_combo_val = StringVar()
+logCircle_combo_val = StringVar()
+haulBy_combo_val = StringVar()
+truckLicense_combo_val = StringVar()
+truckNum_combo_val = StringVar()
+axle_combo_val = StringVar()
+
+# 1st row combobox inisialize
+TM9_combo = ttk.Combobox(root,textvariable = TM9_combo_val)
+wCircle_combo = ttk.Combobox(root,textvariable = wCircle_combo_val)
+block_combo = ttk.Combobox(root,textvariable = block_combo_val)
+logCircle_combo = ttk.Combobox(root,textvariable = logCircle_combo_val)
+haulBy_combo = ttk.Combobox(root,textvariable = haulBy_combo_val)
+truckLicense_combo = ttk.Combobox(root,textvariable = truckLicense_combo_val)
+truckNum_combo = ttk.Combobox(root,textvariable = truckNum_combo_val)
+axle_combo = ttk.Combobox(root,textvariable = axle_combo_val)
 
 #Drop down menu Widgets
-root.DD_L_month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug',
-                        'Sep','Oct','Nov','Dec']
-DD_month = Create_DropDown()
+pady_val = 100
+columnum = 0
+TM9_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
+columnum = columnum+1
+wCircle_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
+columnum = columnum+1
+block_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
+columnum = columnum+1
+logCircle_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
+columnum = columnum+1
+haulBy_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
+columnum = columnum+1
+truckLicense_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
+columnum = columnum+1
+truckNum_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
+columnum = columnum+1
+axle_combo.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
+columnum = columnum+1
 
 #initial values in entry boxes
-Dir_entry.insert(0,cwd)
-root.Year_entry.insert(0,"2017")
-
-Dir_entry_row = 1
-Fname_entry_row = 2
 
 #enlarge Text boxes
 
 
-#Layout Widgets
+#Brisco Label
 label_image.grid(row=0,column=0,pady=(0,30),sticky=E)
-label_folder.grid(row=1,column=0,sticky=W)
-Dir_entry.grid(row=1,column=0,sticky=E)
-Dir_to_Save.grid(row=1,column=3)
-label_Fname.grid(row=2, column=0,sticky=W)
-Fname_entry.grid(row=2, column=0,sticky=E)
-label_month.grid(row=3,column=0,pady=(20,0))
-label_year.grid(row=3,column=1,pady=(20,0))
-root.Year_entry.grid(row=4,column=1)
-DD_month.grid(row=4, column= 0)
-button_printName.grid(row=5,column=0,sticky=W,pady=100)
+
+#1st Row Layout Widgets
+label_date.grid(row=1,column=0)
+label_popNum.grid(row=1,column=1)
+label_popNumCount.grid(row=1,column=2)
+label_SampleLoad.grid(row=1,column=3)
+label_TM9.grid(row=1,column=4)
+label_owner.grid(row=1,column=5)
+label_FMA.grid(row=1,column=6)
+label_workingCircle.grid(row=1,column=7)
+
+#1st row Emtry and Combobox
+
+
+#2nd row layout Widgets
+label_BlockNum.grid(row=3,column=0)
+label_loggingCo.grid(row=3,column=1)
+label_TruckPlate.grid(row=3,column=2)
+label_TruckNum.grid(row=3,column=3)
+label_TruckAxle.grid(row=3,column=4)
+label_gross.grid(row=3,column=5)
+label_tare.grid(row=3,column=6)
+label_net.grid(row=3,column=7)
+
 
 root.mainloop()
