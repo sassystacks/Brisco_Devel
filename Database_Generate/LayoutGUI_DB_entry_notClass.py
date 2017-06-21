@@ -10,7 +10,7 @@ from PIL import Image, ImageTk
 
 # B = ExtractCSV(A,'test.csv',11,2016)
 root = Tk()
-root.geometry("500x500")
+root.geometry("1200x800")
 
 img = Image.open("Brisco_logo.png")
 tk_img = ImageTk.PhotoImage(img)
@@ -39,9 +39,9 @@ label_pcs = Label(root, text="Pieces")
 label_hauledBy = Label(root, text = "Hauled by")
 
 # labels that change with weight entered
-textVarGross = "Temporary Place Holder"
-textVarTare = "Temporary Place Holder"
-textVarNet = "Temporary Place Holder"
+textVarGross = "[]kg"
+textVarTare = "[]kg"
+textVarNet = "[]kgr"
 
 label_scaleGross = Label(root,text=textVarGross)
 label_scaleTare = Label(root,text=textVarTare )
@@ -50,7 +50,8 @@ label_scaleNet = Label(root,text=textVarNet)
 # Buttons
 button_weighIn = Button(root, text="Weigh In",bg='green')
 button_weighOut = Button(root, text="Weigh Out",bg='green')
-
+button_weighIn.config(width='20',height='8',activebackground='red')
+button_weighOut.config(width='20',height='8',activebackground='red')
 # Drop Down Menus
 # Generate Time and Date
 date_now = str(datetime.datetime.now().date())
