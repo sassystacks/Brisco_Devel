@@ -52,6 +52,7 @@ button_weighIn = Button(root, text="Weigh In",bg='green')
 button_weighOut = Button(root, text="Weigh Out",bg='green')
 button_weighIn.config(width='20',height='8',activebackground='red')
 button_weighOut.config(width='20',height='8',activebackground='red')
+
 # Drop Down Menus
 # Generate Time and Date
 date_now = str(datetime.datetime.now().date())
