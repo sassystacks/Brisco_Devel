@@ -12,6 +12,9 @@ from PIL import Image, ImageTk
 root = Tk()
 root.geometry("1200x800")
 
+connect_trucker = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
+
+
 img = Image.open("Brisco_logo.png")
 tk_img = ImageTk.PhotoImage(img)
 
