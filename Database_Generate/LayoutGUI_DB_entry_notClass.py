@@ -2,6 +2,7 @@ from Tkinter import *
 import ttk
 import Tkinter, Tkconstants, tkFileDialog
 import datetime
+from Connect_Brisco_DB import Connect_DB
 
 from PIL import Image, ImageTk
 
