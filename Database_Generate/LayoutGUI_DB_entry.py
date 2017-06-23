@@ -4,7 +4,7 @@ import Tkinter, Tkconstants, tkFileDialog
 import datetime
 from Connect_Brisco_DB import Connect_DB
 from DB_searchandFill import DB_search
-
+from psycopg2 import sql
 # Function Defs
 
 # B = ExtractCSV(A,'test.csv',11,2016)
@@ -124,7 +124,7 @@ class GUIatFrontDesk:
         #hauling Contractor Combobox
         self.hauledBy_combo = ttk.Combobox(master,textvariable = self.hauledBy_combo_val)
         self.hauledBy_combo['values'] = self.init_list_haulingcontractor
-        self.hauledBy_combo.bind("<<ComboboxSelected>>",lambda event: self.DB_Search_n_Fill(event,"Hauledby",self.Connect_Brisco_DB))
+        self.hauledBy_combo.bind("<<ComboboxSelected>>",lambda event: self.DB_Search_n_Fill(event,"haulingcontractor",self.Connect_Brisco_DB))
 
         # 2nd Row combobox initialize
         self.wCircle_combo = ttk.Combobox(master,textvariable = self.wCircle_combo_val)
@@ -239,30 +239,61 @@ class GUIatFrontDesk:
         self.button_weighOut.grid(row=7,column=columnum,pady=100)
 
     def DB_Search_n_Fill(self, event, strg, DB_instance):
-
+        t_list_licensee = []
+        t_list_FMA = []
+        t_list_workingCirc = []
+        t_list_blocknum = []
+        t_list_loggingco = []
+        t_list_hauling =[]
+        t_list_truckplate = []
+        t_list_truckNum = []
+        t_list_truckAxle = []
 
         if strg == 'licensee':
             self.var_Selected = self.owner_combo.current()
             selection_val = self.init_list_Licensee[self.var_Selected]
+            self.cur.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val, ))
+            rows=self.cur.fetchall()
 
-        elif strg == 'Hauledby':
+
+            for row in rows:
+                t_list_FMA.append(row[1])
+                t_list_workingCirc.append(row[2])
+                t_list_blocknum.append(row[3])
+                t_list_loggingco.append(row[4])
+                t_list_hauling.append(row[5])
+                t_list_truckplate.append(row[6])
+                t_list_truckNum.append(row[7])
+                t_list_truckAxle.append(row[8])
+
+        # A = DB_search(DB_instance)
+            self.hauledBy_combo['values'] = list(set(t_list_hauling))
+
+        elif strg == 'haulingcontractor':
             self.var_Selected = self.hauledBy_combo.current()
             selection_val = str(self.init_list_haulingcontractor[self.var_Selected])
+            self.cur.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val, ))
+            rows=self.cur.fetchall()
 
-        print(type(selection_val))
-        print(selection_val)
-        SQL = "SELECT * FROM trucker_db WHERE %s IS %s;"
-        data = (strg,selection_val)
 
-        self.cur.mogrify(SQL,data)
-        print"SQL is: ", self.cur.mogrify(SQL,data)
-        rows = self.cur.fetchall()
-        print(selection_val)
-        print(rows)
-        # A = DB_search(DB_instance)
+            for row in rows:
+                t_list_licensee.append(row[0])
+                t_list_FMA.append(row[1])
+                t_list_workingCirc.append(row[2])
+                t_list_blocknum.append(row[3])
+                t_list_loggingco.append(row[4])
+                t_list_truckplate.append(row[6])
+                t_list_truckNum.append(row[7])
+                t_list_truckAxle.append(row[8])
 
-        # A.get_licensee()
+            self.owner_combo['values'] = list(set(t_list_licensee))
 
+        self.wCircle_combo['values'] = list(set(t_list_workingCirc))
+        self.block_combo['values'] = list(set(t_list_blocknum))
+        self.logCo_combo['values'] = list(set(t_list_loggingco))
+        self.truckLicense_combo['values'] = list(set(t_list_truckplate))
+        self.truckNum_combo['values'] = list(set(t_list_truckNum))
+        self.axle_combo['values'] = list(set(t_list_truckAxle))
 
 # Main loop keep at bottom
 root = Tk()
