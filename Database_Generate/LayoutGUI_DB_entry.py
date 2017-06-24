@@ -367,5 +367,6 @@ class GUIatFrontDesk:
 root = Tk()
 
 A = GUIatFrontDesk(root)
-root.geometry("1200x400")
+root.attributes('-fullscreen',True)
+# root.geometry("1200x400")
 root.mainloop()
