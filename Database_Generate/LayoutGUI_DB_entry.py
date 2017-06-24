@@ -70,8 +70,11 @@ class GUIatFrontDesk:
         # Buttons
         self.button_weighIn = Button(master, text="Weigh In",bg='green')
         self.button_weighOut = Button(master, text="Weigh Out",bg='green')
+        self.button_reset = Button(master, text ='Reset',command=self.Reset_button)
+        self.button_reset.config(width='10',height='8',activebackground='red')
         self.button_weighIn.config(width='20',height='8',activebackground='red')
         self.button_weighOut.config(width='20',height='8',activebackground='red')
+
         # Drop Down Menus
         # Generate Time and Date
         self.date_now = str(datetime.datetime.now().date())
@@ -117,6 +120,7 @@ class GUIatFrontDesk:
         # 1st row combobox inisialize with bind to mouseclick
         self.owner_combo = ttk.Combobox(master,textvariable = self.owner_combo_val)
         self.owner_combo['values'] = self.init_list_Licensee
+        self.owner_combo.set(self.init_list_Licensee[0])
         self.owner_combo.bind("<<ComboboxSelected>>",lambda event: self.DB_Search_n_Fill(event,"licensee",self.Connect_Brisco_DB))
 
         self.FMA_combo = ttk.Combobox(master,textvariable = self.FMA_combo_val)
@@ -124,6 +128,7 @@ class GUIatFrontDesk:
         #hauling Contractor Combobox
         self.hauledBy_combo = ttk.Combobox(master,textvariable = self.hauledBy_combo_val)
         self.hauledBy_combo['values'] = self.init_list_haulingcontractor
+        self.hauledBy_combo.set(self.init_list_haulingcontractor[0])
         self.hauledBy_combo.bind("<<ComboboxSelected>>",lambda event: self.DB_Search_n_Fill(event,"haulingcontractor",self.Connect_Brisco_DB))
 
         # 2nd Row combobox initialize
@@ -237,7 +242,7 @@ class GUIatFrontDesk:
         self.button_weighIn.grid(row=7,column=columnum,pady=100)
         columnum = columnum+1
         self.button_weighOut.grid(row=7,column=columnum,pady=100)
-
+        self.button_reset.grid(row=7,column=7,pady=100)
     def DB_Search_n_Fill(self, event, strg, DB_instance):
         t_list_licensee = []
         t_list_FMA = []
@@ -251,10 +256,9 @@ class GUIatFrontDesk:
 
         if strg == 'licensee':
             self.var_Selected = self.owner_combo.current()
-            selection_val = self.init_list_Licensee[self.var_Selected]
+            selection_val = str(self.init_list_Licensee[self.var_Selected])
             self.cur.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val, ))
             rows=self.cur.fetchall()
-
 
             for row in rows:
                 t_list_FMA.append(row[1])
@@ -266,7 +270,6 @@ class GUIatFrontDesk:
                 t_list_truckNum.append(row[7])
                 t_list_truckAxle.append(row[8])
 
-        # A = DB_search(DB_instance)
             self.hauledBy_combo['values'] = list(set(t_list_hauling))
 
         elif strg == 'haulingcontractor':
@@ -288,14 +291,79 @@ class GUIatFrontDesk:
 
             self.owner_combo['values'] = list(set(t_list_licensee))
 
-        self.wCircle_combo['values'] = list(set(t_list_workingCirc))
-        self.block_combo['values'] = list(set(t_list_blocknum))
-        self.logCo_combo['values'] = list(set(t_list_loggingco))
-        self.truckLicense_combo['values'] = list(set(t_list_truckplate))
-        self.truckNum_combo['values'] = list(set(t_list_truckNum))
-        self.axle_combo['values'] = list(set(t_list_truckAxle))
+        wCircle_combo_list = [x for x in list(set(t_list_workingCirc)) if x is not None]
+        block_combo_list = list(set(t_list_blocknum))
+        logCo_combo_list = list(set(t_list_loggingco))
+        truckLicense_combo_list = list(set(t_list_truckplate))
+        truckNum_combo_list = list(set(t_list_truckNum))
+        axle_combo_list = list(set(t_list_truckAxle))
 
-# Main loop keep at bottom
+        #Populate the rest of the fields
+        self.wCircle_combo['values'] = [x for x in wCircle_combo_list if x is not None]
+        self.block_combo['values'] = [x for x in block_combo_list if x is not None]
+        self.logCo_combo['values'] = [x for x in logCo_combo_list if x is not None]
+        self.truckLicense_combo['values'] = [x for x in truckLicense_combo_list if x is not None]
+        self.truckNum_combo['values'] = [x for x in truckNum_combo_list if x is not None]
+        self.axle_combo['values'] = [x for x in axle_combo_list if x is not None]
+
+        #Populate the combo box with the initial value
+        try:
+            self.wCircle_combo.set(str(wCircle_combo_list[0]))
+        except:
+            self.wCircle_combo.set('')
+        try:
+            self.block_combo.set(str(block_combo_list[0]))
+        except:
+            self.block_combo.set('')
+        try:
+            self.logCo_combo.set(str(logCo_combo_list[0]))
+        except:
+            self.logCo_combo.set('')
+        try:
+            self.truckLicense_combo.set(str(truckLicense_combo_list[0]))
+        except:
+            self.truckLicense_combo.set('')
+        try:
+            self.truckNum_combo.set(str(truckNum_combo_list[0]))
+        except:
+            self.truckNum_combo.set('')
+        try:
+            self.axle_combo.set(str(axle_combo_list[0]))
+        except:
+            self.axle_combo.set('')
+
+    def Reset_button(self):
+        init_list_Licensee =[]
+        init_list_haulingcontractor=[]
+        self.cur.execute("SELECT * FROM trucker_DB")
+        rows = self.cur.fetchall()
+        for row in rows:
+            if row[0] is not None:
+                init_list_Licensee.append(row[0])
+            if row[5] is not None:
+                init_list_haulingcontractor.append(row[5])
+
+        self.init_list_Licensee = list(set(init_list_Licensee))
+        self.init_list_haulingcontractor = list(set(init_list_haulingcontractor))
+
+        self.owner_combo['values'] = self.init_list_Licensee
+        self.owner_combo.set(self.init_list_Licensee[0])
+        self.hauledBy_combo['values'] =self.init_list_haulingcontractor
+        self.hauledBy_combo.set(self.init_list_haulingcontractor[0])
+
+        self.wCircle_combo.set('')
+        self.block_combo.set('')
+        self.logCo_combo.set('')
+        self.truckLicense_combo.set('')
+        self.truckNum_combo.set('')
+        self.axle_combo.set('')
+        self.axle_combo.set('')
+'''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Main loop keep at bottom~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'''
+
 root = Tk()
 
 A = GUIatFrontDesk(root)
