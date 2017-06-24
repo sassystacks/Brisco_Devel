@@ -18,10 +18,10 @@ class GUIatFrontDesk:
         init_list_haulingcontractor = []
 
         self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
-        self.cur = self.Connect_Brisco_DB.crsr()
+        self.cur1 = self.Connect_Brisco_DB.crsr()
 
-        self.cur.execute("SELECT * FROM trucker_DB")
-        rows = self.cur.fetchall()
+        self.cur1.execute("SELECT * FROM trucker_DB")
+        rows = self.cur1.fetchall()
         for row in rows:
             if row[0] is not None:
                 init_list_Licensee.append(row[0])
@@ -142,6 +142,7 @@ class GUIatFrontDesk:
         #Drop down menu Widgets
         pady_val = 100
         columnum = 0
+        rownum = 2
         self.popLoad_DD_menu.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
         columnum = columnum+1
         self.popCount_entry.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
@@ -257,8 +258,8 @@ class GUIatFrontDesk:
         if strg == 'licensee':
             self.var_Selected = self.owner_combo.current()
             selection_val = str(self.init_list_Licensee[self.var_Selected])
-            self.cur.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val, ))
-            rows=self.cur.fetchall()
+            self.cur1.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val, ))
+            rows=self.cur1.fetchall()
 
             for row in rows:
                 t_list_FMA.append(row[1])
@@ -275,8 +276,8 @@ class GUIatFrontDesk:
         elif strg == 'haulingcontractor':
             self.var_Selected = self.hauledBy_combo.current()
             selection_val = str(self.init_list_haulingcontractor[self.var_Selected])
-            self.cur.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val, ))
-            rows=self.cur.fetchall()
+            self.cur1.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val, ))
+            rows=self.cur1.fetchall()
 
 
             for row in rows:
@@ -335,8 +336,8 @@ class GUIatFrontDesk:
     def Reset_button(self):
         init_list_Licensee =[]
         init_list_haulingcontractor=[]
-        self.cur.execute("SELECT * FROM trucker_DB")
-        rows = self.cur.fetchall()
+        self.cur1.execute("SELECT * FROM trucker_DB")
+        rows = self.cur1.fetchall()
         for row in rows:
             if row[0] is not None:
                 init_list_Licensee.append(row[0])
@@ -358,6 +359,8 @@ class GUIatFrontDesk:
         self.truckNum_combo.set('')
         self.axle_combo.set('')
         self.axle_combo.set('')
+    def WeighIN(self):
+        pass
 '''
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Main loop keep at bottom~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -367,6 +370,6 @@ class GUIatFrontDesk:
 root = Tk()
 
 A = GUIatFrontDesk(root)
-root.attributes('-fullscreen',True)
-# root.geometry("1200x400")
+# root.attributes('-fullscreen',True)
+root.geometry("1200x700")
 root.mainloop()
