@@ -1,6 +1,9 @@
 import serial
 
-ser = serial.Serial('ACM0',9600)
+ser = serial.Serial('/dev/ttyUSB0',9600)
 
 while(1)
-    ser.printline()
+    a = ser.printline()
+    b = a.split()[0]
+    print(b)
+    print(type(b))

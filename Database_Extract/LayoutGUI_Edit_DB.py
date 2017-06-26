@@ -63,10 +63,8 @@ class GUIforDBedit:
         self.button_printName.grid(row=5,column=3,sticky=W,pady=100)
         #Example of a second window opening up
 
-        self.frame = Frame(self.master)
-        self.button1 = Button(self.frame, text = 'New Window', width = 25, command = self.new_window)
-        self.button1.pack()
-        self.frame.pack()
+        self.button1 = Button(self.master, text = 'New Window', width = 25, command = self.new_window)
+        self.button1.grid(row=5,column=4,pady=(20,0))
 
     def new_window(self):
         self.newWindow = tk.Toplevel(self.master)
@@ -108,7 +106,7 @@ class GUIforDBedit:
             self.Dir_entry.insert(0,self.directory)
 
     def new_window(self):
-        self.newWindow = tk.Toplevel(self.master)
+        self.newWindow = Toplevel(self.master)
         self.app = Demo2(self.newWindow)
 
 

@@ -1,2 +1,4 @@
-SQL = "SELECT * FROM trucker_db WHERE licensee = %s;"
-print(SQL)
+str_test = "       110 KG GR"
+a = int(str_test.split()[0])
+print(type(a))
+print(a)

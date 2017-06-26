@@ -13,7 +13,7 @@ class GUIatFrontDesk:
 
     def __init__(self,master):
         from PIL import Image, ImageTk
-
+        self.master = master
         init_list_Licensee = []
         init_list_haulingcontractor = []
 
@@ -41,7 +41,7 @@ class GUIatFrontDesk:
         self.label_date = Label(master,text ="Date")
         self.label_popNum = Label(master,text ="Pop. Load Slip#")
         self.label_popNumCount = Label(master,text ="Pop. Count")
-        self.label_SampleLoad = Label(master,text ="Sample Loads")
+        self.label_SampleLoad = Label(master,text ="Sample Load")
         self.label_TM9 = Label(master, text="TM9/Ticket #")
         self.label_owner = Label(master, text="Owner")
         self.label_hauledBy = Label(master, text = "Hauling Contractor")
@@ -57,18 +57,17 @@ class GUIatFrontDesk:
         self.label_pcs = Label(master, text="Pieces")
         self.label_FMA = Label(master, text="Disposition/FMA #")
 
-
         # labels that change with weight entered
-        self.textVarGross = "[]kg"
-        self.textVarTare = "[]kg"
-        self.textVarNet = "[]kgr"
+        self.textVarGross = "----kg"
+        self.textVarTare = "----kg"
+        self.textVarNet = "----kgr"
 
         self.label_scaleGross = Label(master,text=self.textVarGross)
         self.label_scaleTare = Label(master,text=self.textVarTare )
         self.label_scaleNet = Label(master,text=self.textVarNet)
 
         # Buttons
-        self.button_weighIn = Button(master, text="Weigh In",bg='green')
+        self.button_weighIn = Button(master, text="Weigh In",bg='green',command=self.WeighIN)
         self.button_weighOut = Button(master, text="Weigh Out",bg='green')
         self.button_reset = Button(master, text ='Reset',command=self.Reset_button)
         self.button_reset.config(width='10',height='8',activebackground='red')
@@ -77,12 +76,10 @@ class GUIatFrontDesk:
 
         # Drop Down Menus
         # Generate Time and Date
-        self.date_now = str(datetime.datetime.now().date())
-        self.time_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
 
-        self.gen_date = Label(master, text = self.date_now)
-        self.gen_timeIn = Label(master, text = self.time_now)
-        self.gen_timeOut = Label(master, text = self.time_now)
+        self.gen_date = Label(master, text = "-------------")
+        self.gen_timeIn = Label(master, text = "-------------")
+        self.gen_timeOut = Label(master, text = "-------------")
 
         #population load slip
         self.DD_lst_popLoad = ['720','726','730','740','750','760','780','785']
@@ -99,9 +96,6 @@ class GUIatFrontDesk:
         # textEntry
         self.popCount_entry = Entry(master)
         self.TM9_entry =Entry(master)
-        self.gross_entry = Entry(master)
-        self.tare_entry = Entry(master)
-        self.net_entry = Entry(master)
         self.timeIn_entry = Entry(master)
         self.timeOut_entry = Entry(master)
         self.pcs_entry = Entry(master)
@@ -244,6 +238,7 @@ class GUIatFrontDesk:
         columnum = columnum+1
         self.button_weighOut.grid(row=7,column=columnum,pady=100)
         self.button_reset.grid(row=7,column=7,pady=100)
+
     def DB_Search_n_Fill(self, event, strg, DB_instance):
         t_list_licensee = []
         t_list_FMA = []
@@ -271,14 +266,26 @@ class GUIatFrontDesk:
                 t_list_truckNum.append(row[7])
                 t_list_truckAxle.append(row[8])
 
-            self.hauledBy_combo['values'] = list(set(t_list_hauling))
+            HauledBy_combo_list = list(set(t_list_hauling))
+            self.hauledBy_combo['values'] = HauledBy_combo_list
 
         elif strg == 'haulingcontractor':
+
             self.var_Selected = self.hauledBy_combo.current()
             selection_val = str(self.init_list_haulingcontractor[self.var_Selected])
-            self.cur1.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val, ))
+            self.cur1.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val,))
             rows=self.cur1.fetchall()
 
+            #Set the TM9 to last entry in DB
+            self.cur1.execute(sql.SQL("SELECT tm9_ticket FROM barkies_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val,))
+            tm9_lst = self.cur1.fetchall()
+            # print(tm9_lst)
+            # print(type(tm9_lst))
+            str_test = str(tm9_lst[-1])
+            a = str_test.strip('()')
+            b = a.strip('\' ,')
+            self.TM9_entry.delete(0,'end')
+            self.TM9_entry.insert(0,b)
 
             for row in rows:
                 t_list_licensee.append(row[0])
@@ -289,8 +296,8 @@ class GUIatFrontDesk:
                 t_list_truckplate.append(row[6])
                 t_list_truckNum.append(row[7])
                 t_list_truckAxle.append(row[8])
-
-            self.owner_combo['values'] = list(set(t_list_licensee))
+            owner_combo_list =list(set(t_list_licensee))
+            self.owner_combo['values'] = owner_combo_list
 
         wCircle_combo_list = [x for x in list(set(t_list_workingCirc)) if x is not None]
         block_combo_list = list(set(t_list_blocknum))
@@ -334,6 +341,7 @@ class GUIatFrontDesk:
             self.axle_combo.set('')
 
     def Reset_button(self):
+
         init_list_Licensee =[]
         init_list_haulingcontractor=[]
         self.cur1.execute("SELECT * FROM trucker_DB")
@@ -359,9 +367,21 @@ class GUIatFrontDesk:
         self.truckNum_combo.set('')
         self.axle_combo.set('')
         self.axle_combo.set('')
+        self.TM9_entry.delet(0,'end')
 
     def WeighIN(self):
-        pass
+        import serial
+
+        ser = serial.Serial('/dev/ttyUSB0',9600)
+        str_weight = ser.readline()
+        gross_weight =  str_weight.split()[1]
+
+        self.date_now = str(datetime.datetime.now().date())
+        self.time_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
+        self.gen_date.config(text = self.date_now )
+        self.gen_timeIn.config(text = self.time_now)
+        self.label_scaleGross.config(text = str(gross_weight))
+
 '''
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Main loop keep at bottom~~~~~~~~~~~~~~~~~~~~~~~~~~~
