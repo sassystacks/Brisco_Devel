@@ -359,6 +359,7 @@ class GUIatFrontDesk:
         self.truckNum_combo.set('')
         self.axle_combo.set('')
         self.axle_combo.set('')
+
     def WeighIN(self):
         pass
 '''
