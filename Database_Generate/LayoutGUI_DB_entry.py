@@ -110,17 +110,19 @@ class GUIatFrontDesk:
         self.label_popCount = Label(master,text=self.textpopCount)
 
         #Radio button for determining Weigh in or Weigh Out
-        self.v = IntVar()
-        self.In = Radiobutton(master, text="Weigh In", variable=self.v, value=1)
-        self.Out = Radiobutton(master, text="Weigh Out", variable=self.v, value=2)
+        self.v_radio = IntVar()
+        self.v_radio.set(1)
+        self.In = Radiobutton(master, text="Weigh In", variable=self.v_radio , value=1, command=self.changetext)
+        self.Out = Radiobutton(master, text="Weigh Out", variable=self.v_radio , value=2, command=self.changetext)
 
         # Buttons
-        self.button_weighIn = Button(master, text="Weigh In",bg='green',command=self.WeighIN)
-        self.button_weighOut = Button(master, text="Weigh Out",bg='green',command=self.WeighOUT)
+        self.ButtonText = "Weigh\nIn"
+        self.Bigbutton = Button(master, text=self.ButtonText,bg='green',command=self.buttonPress)
+        # self.button_weighOut = Button(master, text="Weigh Out",bg='green',command=self.WeighOUT)
         self.button_reset = Button(master, text ='Reset',command=self.Reset_button)
         self.button_reset.config(width='10',height='8',activebackground='red')
-        self.button_weighIn.config(width='20',height='8',activebackground='red')
-        self.button_weighOut.config(width='20',height='8',activebackground='red')
+        self.Bigbutton.config(width='20',height='8',activebackground='red')
+        # self.button_weighOut.config(width='20',height='8',activebackground='red')
 
         # Drop Down Menus
         # Generate Time and Date
@@ -298,14 +300,32 @@ class GUIatFrontDesk:
 
         # Buttons
         columnum = 0
-        self.button_weighIn.grid(row=7,column=columnum,pady=100)
+        self.Bigbutton.grid(row=7,column=columnum,pady=100)
         columnum = columnum+1
-        self.button_weighOut.grid(row=7,column=columnum,pady=100)
-        columnum = columnum+1
+        # self.button_weighOut.grid(row=7,column=columnum,pady=100)
+        # columnum = columnum+1
         self.button_reset.grid(row=7,column=7,pady=100)
         self.In.grid(row=7,column=columnum)
         columnum = columnum+1
         self.Out.grid(row=7,column=columnum)
+
+    def buttonPress(self):
+
+        if self.v_radio.get()==1:
+            self.WeighIN()
+
+        else:
+            self.WeighOUT()
+
+
+    def changetext(self):
+        if self.v_radio.get()==1:
+
+            self.ButtonText ="Weigh\nIn"
+        else:
+            self.ButtonText = "Weigh\nOut"
+        print(self.v_radio.get())
+        self.Bigbutton.config(text=self.ButtonText )
 
     def DB_Search_n_Fill(self, event, strg, DB_instance):
         t_list_FMA = []
@@ -383,7 +403,7 @@ class GUIatFrontDesk:
             self.gross_weight =  str_weight.split()[1]
 
         except:
-            pass
+            self.gross_weight =  100
 
         self.date_now = str(datetime.datetime.now().date())
         self.timeIn_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
