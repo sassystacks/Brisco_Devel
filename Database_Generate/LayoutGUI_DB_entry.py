@@ -380,22 +380,20 @@ class GUIatFrontDesk:
         try:
             ser = serial.Serial('/dev/ttyUSB0',9600)
             str_weight = ser.readline()
-            gross_weight =  str_weight.split()[1]
+            self.gross_weight =  str_weight.split()[1]
 
         except:
             pass
 
-        self.gross_weight = 100
         self.date_now = str(datetime.datetime.now().date())
         self.timeIn_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
         self.gen_date.config(text = self.date_now )
-        print(self.date_now)
         self.gen_timeIn.config(text = self.timeIn_now)
         self.label_scaleGross.config(text = str(self.gross_weight))
-        print(self.popLoad_DD_val.get())
-        print(type(self.popLoad_DD_val.get()))
-        self.cur1.execute(sql.SQL("SELECT poploadslip,count FROM barkies_db WHERE {} = %s;").format(sql.Identifier('poploadslip')), (self.popLoad_DD_val.get(),))
+
+        self.cur1.execute(sql.SQL("SELECT poploadslip,count FROM testscale WHERE {} = %s;").format(sql.Identifier('poploadslip')), (self.popLoad_DD_val.get(),))
         a = self.cur1.fetchall()
+
         try:
             self.new_popCount = int(a[-1][1])+1
         except:
@@ -439,8 +437,8 @@ class GUIatFrontDesk:
         try:
             ser = serial.Serial('/dev/ttyUSB0',9600)
             str_weight = ser.readline()
-            tare_weight =  str_weight.split()[1]
-
+            self.tare_weight =  str_weight.split()[1]
+            self.net_weight = self.gross_weight-self.tare_weight
         except:
             self.tare_weight = 50
             self.net_weight = self.gross_weight-self.tare_weight
