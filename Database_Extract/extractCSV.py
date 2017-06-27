@@ -43,7 +43,7 @@ class ExtractCSV:
                 sample = 'N'
             b[-1] = sample
             lst_gov.append(b)
-            print(row[0])
+            
 
 
         with open(self.fname, "wb") as f:

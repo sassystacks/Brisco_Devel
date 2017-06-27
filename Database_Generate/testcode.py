@@ -1,2 +1,4 @@
-SQL = "SELECT * FROM trucker_db WHERE licensee = %s;"
-print(SQL)
+lst = ['set','blah','blee','bloo']
+a =lst.index('bloo')
+
+print(a)
