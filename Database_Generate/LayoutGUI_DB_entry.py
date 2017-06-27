@@ -5,6 +5,9 @@ import datetime
 from Connect_Brisco_DB import Connect_DB
 from DB_searchandFill import DB_search
 from psycopg2 import sql
+import serial
+from psycopg2.extensions import AsIs
+
 # Function Defs
 
 # B = ExtractCSV(A,'test.csv',11,2016)
@@ -15,6 +18,20 @@ class GUIatFrontDesk:
 
         from PIL import Image, ImageTk
         self.master = master
+
+
+        '''
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~            Connect to Database              ~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        '''
+
+        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
+
+
+        self.cur1 = self.Connect_Brisco_DB.crsr()
+
+        #create initial lists to populate dropdown and combobox
         init_list_Licensee = []
         init_list_FMA = []
         init_list_wCircle = []
@@ -23,9 +40,6 @@ class GUIatFrontDesk:
         init_list_truckLicense = []
         init_list_truckNum = []
         init_list_loggingco = []
-
-        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
-        self.cur1 = self.Connect_Brisco_DB.crsr()
 
         self.cur1.execute("SELECT * FROM owner_DB")
         rows = self.cur1.fetchall()
@@ -66,8 +80,8 @@ class GUIatFrontDesk:
         self.label_timeIn_tag = Label(master, text = "Time in: ")
         self.label_timeOut_tag = Label(master, text = "Time out: ")
         self.label_date = Label(master,text ="Date")
-        self.label_popNum = Label(master,text ="Pop. Load Slip#")
-        self.label_popNumCount = Label(master,text ="Pop. Count")
+        self.label_popNum = Label(master,text ="Population")
+        self.label_popNumCount = Label(master,text ="Load Slip #")
         self.label_SampleLoad = Label(master,text ="Sample Load")
         self.label_TM9 = Label(master, text="TM9/Ticket #")
         self.label_owner = Label(master, text="Owner")
@@ -88,14 +102,21 @@ class GUIatFrontDesk:
         self.textVarGross = "----kg"
         self.textVarTare = "----kg"
         self.textVarNet = "----kgr"
+        self.textpopCount = "-------"
 
         self.label_scaleGross = Label(master,text=self.textVarGross)
         self.label_scaleTare = Label(master,text=self.textVarTare )
         self.label_scaleNet = Label(master,text=self.textVarNet)
+        self.label_popCount = Label(master,text=self.textpopCount)
+
+        #Radio button for determining Weigh in or Weigh Out
+        self.v = IntVar()
+        self.In = Radiobutton(master, text="Weigh In", variable=self.v, value=1)
+        self.Out = Radiobutton(master, text="Weigh Out", variable=self.v, value=2)
 
         # Buttons
         self.button_weighIn = Button(master, text="Weigh In",bg='green',command=self.WeighIN)
-        self.button_weighOut = Button(master, text="Weigh Out",bg='green')
+        self.button_weighOut = Button(master, text="Weigh Out",bg='green',command=self.WeighOUT)
         self.button_reset = Button(master, text ='Reset',command=self.Reset_button)
         self.button_reset.config(width='10',height='8',activebackground='red')
         self.button_weighIn.config(width='20',height='8',activebackground='red')
@@ -120,18 +141,18 @@ class GUIatFrontDesk:
         self.sample_DD_Val.set(self.DD_lst_sample[0])
         self.sample_DD_menu = OptionMenu(master, self.sample_DD_Val, *self.DD_lst_sample)
 
-        self.DD_lst_axle = ['6','7','8','9']
+        self.DD_lst_axle = ['5','6','7','8','9','10']
         self.axle_DD_Val = StringVar()
-        self.axle_DD_Val.set(self.DD_lst_axle[0])
+        self.axle_DD_Val.set(self.DD_lst_axle[2])
         self.axle_DD_menu = OptionMenu(master, self.axle_DD_Val, *self.DD_lst_axle)
 
-            # textEntry
-        self.popCount_entry = Entry(master)
+        # textEntry
         self.TM9_entry =Entry(master)
         self.timeIn_entry = Entry(master)
         self.timeOut_entry = Entry(master)
         self.pcs_entry = Entry(master)
         self.block_entry = Entry(master)
+
         # combobox initial val
         self.owner_combo_val = StringVar()
         self.FMA_combo_val = StringVar()
@@ -182,7 +203,7 @@ class GUIatFrontDesk:
         rownum = 2
         self.popLoad_DD_menu.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
         columnum = columnum+1
-        self.popCount_entry.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
+        self.label_popCount.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
         columnum = columnum+1
         self.sample_DD_menu.grid(row = 2, column = columnum,sticky='nwe',pady=(0,pady_val))
         columnum = columnum+1
@@ -280,7 +301,11 @@ class GUIatFrontDesk:
         self.button_weighIn.grid(row=7,column=columnum,pady=100)
         columnum = columnum+1
         self.button_weighOut.grid(row=7,column=columnum,pady=100)
+        columnum = columnum+1
         self.button_reset.grid(row=7,column=7,pady=100)
+        self.In.grid(row=7,column=columnum)
+        columnum = columnum+1
+        self.Out.grid(row=7,column=columnum)
 
     def DB_Search_n_Fill(self, event, strg, DB_instance):
         t_list_FMA = []
@@ -313,109 +338,6 @@ class GUIatFrontDesk:
         except:
             self.FMA_combo.set('')
 
-
-    # #Old function
-    # def DB_Search_n_Fill(self, event, strg, DB_instance):
-    #     t_list_licensee = []
-    #     t_list_FMA = []
-    #     t_list_workingCirc = []
-    #     t_list_blocknum = []
-    #     t_list_loggingco = []
-    #     t_list_hauling =[]
-    #     t_list_truckplate = []
-    #     t_list_truckNum = []
-    #     t_list_truckAxle = []
-    #
-    #     if strg == 'licensee':
-    #         self.var_Selected = self.owner_combo.current()
-    #         selection_val = str(self.init_list_Licensee[self.var_Selected])
-    #         self.cur1.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val, ))
-    #         rows=self.cur1.fetchall()
-    #
-    #         for row in rows:
-    #             t_list_FMA.append(row[1])
-    #             t_list_workingCirc.append(row[2])
-    #             t_list_blocknum.append(row[3])
-    #             t_list_loggingco.append(row[4])
-    #             t_list_hauling.append(row[5])
-    #             t_list_truckplate.append(row[6])
-    #             t_list_truckNum.append(row[7])
-    #             t_list_truckAxle.append(row[8])
-    #
-    #         HauledBy_combo_list = list(set(t_list_hauling))
-    #         self.hauledBy_combo['values'] = HauledBy_combo_list
-    #
-    #     elif strg == 'haulingcontractor':
-    #
-    #         self.var_Selected = self.hauledBy_combo.current()
-    #         selection_val = str(self.init_list_haulingcontractor[self.var_Selected])
-    #         self.cur1.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val,))
-    #         rows=self.cur1.fetchall()
-    #
-    #         #Set the TM9 to last entry in DB
-    #         self.cur1.execute(sql.SQL("SELECT tm9_ticket FROM barkies_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val,))
-    #         tm9_lst = self.cur1.fetchall()
-    #         # print(tm9_lst)
-    #         # print(type(tm9_lst))
-    #         str_test = str(tm9_lst[-1])
-    #         a = str_test.strip('()')
-    #         b = a.strip('\' ,')
-    #         self.TM9_entry.delete(0,'end')
-    #         self.TM9_entry.insert(0,b)
-    #
-    #         for row in rows:
-    #             t_list_licensee.append(row[0])
-    #             t_list_FMA.append(row[1])
-    #             t_list_workingCirc.append(row[2])
-    #             t_list_blocknum.append(row[3])
-    #             t_list_loggingco.append(row[4])
-    #             t_list_truckplate.append(row[6])
-    #             t_list_truckNum.append(row[7])
-    #             t_list_truckAxle.append(row[8])
-    #         owner_combo_list =list(set(t_list_licensee))
-    #         self.owner_combo['values'] = owner_combo_list
-    #
-    #     wCircle_combo_list = [x for x in list(set(t_list_workingCirc)) if x is not None]
-    #     block_combo_list = list(set(t_list_blocknum))
-    #     logCo_combo_list = list(set(t_list_loggingco))
-    #     truckLicense_combo_list = list(set(t_list_truckplate))
-    #     truckNum_combo_list = list(set(t_list_truckNum))
-    #     axle_combo_list = list(set(t_list_truckAxle))
-    #
-    #     #Populate the rest of the fields
-    #     self.wCircle_combo['values'] = [x for x in wCircle_combo_list if x is not None]
-    #     self.block_combo['values'] = [x for x in block_combo_list if x is not None]
-    #     self.logCo_combo['values'] = [x for x in logCo_combo_list if x is not None]
-    #     self.truckLicense_combo['values'] = [x for x in truckLicense_combo_list if x is not None]
-    #     self.truckNum_combo['values'] = [x for x in truckNum_combo_list if x is not None]
-    #     self.axle_combo['values'] = [x for x in axle_combo_list if x is not None]
-    #
-    #     #Populate the combo box with the initial value
-    #     try:
-    #         self.wCircle_combo.set(str(wCircle_combo_list[0]))
-    #     except:
-    #         self.wCircle_combo.set('')
-    #     try:
-    #         self.block_combo.set(str(block_combo_list[0]))
-    #     except:
-    #         self.block_combo.set('')
-    #     try:
-    #         self.logCo_combo.set(str(logCo_combo_list[0]))
-    #     except:
-    #         self.logCo_combo.set('')
-    #     try:
-    #         self.truckLicense_combo.set(str(truckLicense_combo_list[0]))
-    #     except:
-    #         self.truckLicense_combo.set('')
-    #     try:
-    #         self.truckNum_combo.set(str(truckNum_combo_list[0]))
-    #     except:
-    #         self.truckNum_combo.set('')
-    #     try:
-    #         self.axle_combo.set(str(axle_combo_list[0]))
-    #     except:
-    #         self.axle_combo.set('')
-
     def Reset_button(self):
 
         init_list_Licensee =[]
@@ -436,31 +358,102 @@ class GUIatFrontDesk:
         self.hauledBy_combo['values'] =self.init_list_haulingcontractor
         self.hauledBy_combo.set(self.init_list_haulingcontractor[0])
 
+        self.block_entry.delete(0,'end')
+        self.block_entry.insert(0,'')
+
         self.wCircle_combo.set('')
-        self.block_combo.set('')
+
         self.logCo_combo.set('')
         self.truckLicense_combo.set('')
         self.truckNum_combo.set('')
-        self.axle_combo.set('')
-        self.axle_combo.set('')
-        self.TM9_entry.delet(0,'end')
+        self.TM9_entry.delete(0,'end')
+
+        self.gen_timeIn.config(text = '----')
+        self.gen_timeOut.config(text = '----')
+        self.label_scaleTare.config(text = '----')
+        self.label_scaleNet.config(text = '----')
+        self.label_scaleGross.config(text = '----')
+        self.gen_date.config(text = '----')
 
     def WeighIN(self):
-        # import serial
-        #
-        # ser = serial.Serial('/dev/ttyUSB0',9600)
-        # str_weight = ser.readline()
-        # gross_weight =  str_weight.split()[1]
-        #
-        # self.date_now = str(datetime.datetime.now().date())
-        # self.timeIn_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
-        # self.gen_date.config(text = self.date_now )
-        # self.gen_timeIn.config(text = self.time_now)
-        # self.label_scaleGross.config(text = str(gross_weight))
-        print"whatever"
+
+        try:
+            ser = serial.Serial('/dev/ttyUSB0',9600)
+            str_weight = ser.readline()
+            gross_weight =  str_weight.split()[1]
+
+        except:
+            pass
+
+        self.gross_weight = 100
+        self.date_now = str(datetime.datetime.now().date())
+        self.timeIn_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
+        self.gen_date.config(text = self.date_now )
+        print(self.date_now)
+        self.gen_timeIn.config(text = self.timeIn_now)
+        self.label_scaleGross.config(text = str(self.gross_weight))
+        print(self.popLoad_DD_val.get())
+        print(type(self.popLoad_DD_val.get()))
+        self.cur1.execute(sql.SQL("SELECT poploadslip,count FROM barkies_db WHERE {} = %s;").format(sql.Identifier('poploadslip')), (self.popLoad_DD_val.get(),))
+        a = self.cur1.fetchall()
+        try:
+            self.new_popCount = int(a[-1][1])+1
+        except:
+            self.new_popCount = 1
+        self.label_popCount.config(text = str(self.new_popCount) )
+
+        if self.sample_DD_Val.get()=='No':
+            binary_sample = 0
+        else:
+            binary_sample = 1
+
+        #update Data base
+        Weighin_dict = {
+                    'daterecieved': self.date_now,
+                    'poploadslip' : int(self.popLoad_DD_val.get()),
+                    'count' : self.new_popCount,
+                    'sampleloads' : binary_sample,
+                    'tm9_ticket' : self.TM9_entry.get(),
+                    'owner' : self.owner_combo_val.get(),
+                    'disposition_fmanum' : self.FMA_combo_val.get(),
+                    'workingcircle' : self.wCircle_combo_val.get(),
+                    'blocknum' : self.block_entry.get(),
+                    'loggingco' : self.logCo_combo_val.get(),
+                    'haulingcontractor' : self.hauledBy_combo_val.get(),
+                    'truckplate' : self.truckLicense_combo_val.get(),
+                    'trucknum' : self.truckNum_combo_val.get(),
+                    'truckaxle' : int(self.axle_DD_Val.get()),
+                    'grossweight' : self.gross_weight
+
+                   }
+
+        columns = Weighin_dict.keys()
+        values = [Weighin_dict[column] for column in columns]
+
+        insert_statement = 'INSERT INTO testscale (%s) VALUES %s'
+
+        self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
+        # print self.cur1.mogrify(insert_statement, (AsIs(','.join(columns)), tuple(values)))
+
+    def WeighOUT(self):
+        try:
+            ser = serial.Serial('/dev/ttyUSB0',9600)
+            str_weight = ser.readline()
+            tare_weight =  str_weight.split()[1]
+
+        except:
+            self.tare_weight = 50
+            self.net_weight = self.gross_weight-self.tare_weight
+
+        timeOut_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
+        self.gen_timeOut.config(text = timeOut_now)
+        self.label_scaleTare.config(text = str(self.tare_weight))
+        self.label_scaleNet.config(text = str(self.net_weight))
+
     def WritetoDB(self):
 
         self.cur1.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val,))
+
 
 '''
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

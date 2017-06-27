@@ -27,5 +27,6 @@ def main():
     root = tk.Tk()
     app = Demo1(root)
     root.mainloop()
+
 if __name__ == '__main__':
     main()
