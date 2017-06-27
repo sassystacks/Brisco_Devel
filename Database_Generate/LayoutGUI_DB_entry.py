@@ -324,8 +324,17 @@ class GUIatFrontDesk:
             self.ButtonText ="Weigh\nIn"
         else:
             self.ButtonText = "Weigh\nOut"
-        print(self.v_radio.get())
+            self.WeighOUTfill()
+
         self.Bigbutton.config(text=self.ButtonText )
+
+    def WeighOUTfill(self):
+
+        self.cur1.execute("SELECT * FROM testscale WHERE tareweight IS Null;")
+
+    def CreateLists(self):
+        pass
+
 
     def DB_Search_n_Fill(self, event, strg, DB_instance):
         t_list_FMA = []
@@ -441,7 +450,8 @@ class GUIatFrontDesk:
                     'truckplate' : self.truckLicense_combo_val.get(),
                     'trucknum' : self.truckNum_combo_val.get(),
                     'truckaxle' : int(self.axle_DD_Val.get()),
-                    'grossweight' : self.gross_weight
+                    'grossweight' : self.gross_weight,
+                    'timeIn'  :     self.timeIn_now,
 
                    }
 
@@ -467,6 +477,18 @@ class GUIatFrontDesk:
         self.gen_timeOut.config(text = timeOut_now)
         self.label_scaleTare.config(text = str(self.tare_weight))
         self.label_scaleNet.config(text = str(self.net_weight))
+        WeighOut_dict = {
+                    'tareweight': self.tare_weight,
+                    'netweight' : self.net_weight,
+                    'timeOut'   : timeOut_now
+                   }
+
+        columns = Weighin_dict.keys()
+        values = [Weighin_dict[column] for column in columns]
+
+        insert_statement = 'INSERT INTO testscale (%s) VALUES %s'
+
+        self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
 
     def WritetoDB(self):
 

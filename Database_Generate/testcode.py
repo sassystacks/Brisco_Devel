@@ -1,4 +1,4 @@
-str_test = "       110 KG GR"
-a = int(str_test.split()[0])
-print(type(a))
+lst = ['set','blah','blee','bloo']
+a =lst.index('bloo')
+
 print(a)
