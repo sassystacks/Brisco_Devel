@@ -490,9 +490,12 @@ class GUIatFrontDesk:
         columns = WeighOut_dict.keys()
         values = [WeighOut_dict[column] for column in columns]
 
-        insert_statement = 'INSERT INTO testscale (%s) VALUES %s'
+        insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
+        strng = 'test'
+        print(self.cur1.mogrify(insert_statement, (AsIs(','.join(columns)), tuple(values), strng)))
 
-        self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
+        self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
+
 
     def WritetoDB(self):
 

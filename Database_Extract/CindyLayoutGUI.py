@@ -217,6 +217,8 @@ class CindyProgram:
     def EnterScaler(self):
         pass
 
+    def killProcess(self):
+        pass
 def main():
     root = Tk()
     root.geometry("1300x700")
