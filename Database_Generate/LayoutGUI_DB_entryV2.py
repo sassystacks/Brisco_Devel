@@ -8,10 +8,6 @@ from psycopg2 import sql
 import serial
 from psycopg2.extensions import AsIs
 
-# Function Defs
-
-# B = ExtractCSV(A,'test.csv',11,2016)
-
 class GUIatFrontDesk:
 
     def __init__(self,master):
