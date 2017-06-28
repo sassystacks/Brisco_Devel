@@ -7,6 +7,7 @@ class CSV_export:
     def __init__(self, master):
         # self.main_container = Frame(master, background="bisque")
         # self.main_container.pack(side="top", fill="both", expand=True)
+        
         self.master = master
         master.title("Export CSV")
 

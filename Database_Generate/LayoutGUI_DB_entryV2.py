@@ -25,10 +25,8 @@ class GUIatFrontDesk:
         ~~~~~~~~~~~~~~~~~~~~~~~~~~            Connect to Database              ~~~~~~~~~~~~~~~~~~~~~~~~~~
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
-
-        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
-
-
+        connect_ip = '192.168.20.200'
+        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.20.200','coffeegood')
         self.cur1 = self.Connect_Brisco_DB.crsr()
 
         #create initial lists to populate dropdown and combobox
