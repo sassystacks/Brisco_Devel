@@ -308,7 +308,9 @@ class GUIatFrontDesk:
         self.In.grid(row=7,column=columnum)
         columnum = columnum+1
         self.Out.grid(row=7,column=columnum)
-
+        '''
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~ Destroy Process ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        '''
         self.master.bind('<Escape>', lambda e: root.destroy())
 
     def buttonPress(self):
@@ -412,7 +414,7 @@ class GUIatFrontDesk:
             ser = serial.Serial('/dev/ttyUSB0',9600)
             str_weight = ser.readline()
             self.gross_weight =  str_weight.split()[1]
-
+            self.gross_weight =int(self.gross_weight)
         except:
             self.gross_weight =  100
 
@@ -470,7 +472,7 @@ class GUIatFrontDesk:
             ser = serial.Serial('/dev/ttyUSB0',9600)
             str_weight = ser.readline()
             self.tare_weight =  str_weight.split()[1]
-            self.net_weight = self.gross_weight-self.tare_weight
+            self.net_weight = int(self.gross_weight)-int(self.tare_weight)
         except:
             self.tare_weight = 50
             self.net_weight = self.gross_weight-self.tare_weight
@@ -496,8 +498,6 @@ class GUIatFrontDesk:
 
         self.cur1.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val,))
 
-    def killProcess(self,event):
-        self.master.destroy()
 '''
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Main loop keep at bottom~~~~~~~~~~~~~~~~~~~~~~~~~~~
