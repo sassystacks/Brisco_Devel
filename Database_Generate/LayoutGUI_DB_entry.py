@@ -119,8 +119,8 @@ class GUIatFrontDesk:
         self.ButtonText = "Weigh\nIn"
         self.Bigbutton = Button(master, text=self.ButtonText,bg='green',command=self.buttonPress)
         # self.button_weighOut = Button(master, text="Weigh Out",bg='green',command=self.WeighOUT)
-        self.button_reset = Button(master, text ='Reset',command=self.Reset_button)
-        self.button_reset.config(width='10',height='8',activebackground='red')
+        # self.button_reset = Button(master, text ='Reset',command=self.Reset_button)
+        # self.button_reset.config(width='10',height='8',activebackground='red')
         self.Bigbutton.config(width='20',height='8',activebackground='red')
         # self.button_weighOut.config(width='20',height='8',activebackground='red')
 
@@ -304,10 +304,12 @@ class GUIatFrontDesk:
         columnum = columnum+1
         # self.button_weighOut.grid(row=7,column=columnum,pady=100)
         # columnum = columnum+1
-        self.button_reset.grid(row=7,column=7,pady=100)
+        # self.button_reset.grid(row=7,column=7,pady=100)
         self.In.grid(row=7,column=columnum)
         columnum = columnum+1
         self.Out.grid(row=7,column=columnum)
+
+        self.master.bind('<Escape>', lambda e: root.destroy())
 
     def buttonPress(self):
 
@@ -403,6 +405,7 @@ class GUIatFrontDesk:
         self.label_scaleGross.config(text = '----')
         self.gen_date.config(text = '----')
 
+
     def WeighIN(self):
 
         try:
@@ -493,7 +496,8 @@ class GUIatFrontDesk:
 
         self.cur1.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val,))
 
-
+    def killProcess(self,event):
+        self.master.destroy()
 '''
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Main loop keep at bottom~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -503,6 +507,6 @@ class GUIatFrontDesk:
 root = Tk()
 
 A = GUIatFrontDesk(root)
-# root.attributes('-fullscreen',True)
-root.geometry("1200x700")
+root.attributes('-fullscreen',True)
+# root.geometry("1200x800")
 root.mainloop()
