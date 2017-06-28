@@ -26,7 +26,7 @@ class GUIatFrontDesk:
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
 
-        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
+        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.20.200','coffeegood')
 
 
         self.cur1 = self.Connect_Brisco_DB.crsr()

@@ -329,8 +329,7 @@ class GUIatFrontDesk:
         self.Bigbutton.config(text=self.ButtonText )
 
     def WeighOUTfill(self):
-
-        self.cur1.execute("SELECT * FROM testscale WHERE tareweight IS Null;")
+        pass
 
     def CreateLists(self):
         pass
@@ -483,8 +482,8 @@ class GUIatFrontDesk:
                     'timeOut'   : timeOut_now
                    }
 
-        columns = Weighin_dict.keys()
-        values = [Weighin_dict[column] for column in columns]
+        columns = WeighOut_dict.keys()
+        values = [WeighOut_dict[column] for column in columns]
 
         insert_statement = 'INSERT INTO testscale (%s) VALUES %s'
 
