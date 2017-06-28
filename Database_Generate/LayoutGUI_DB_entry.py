@@ -242,9 +242,9 @@ class GUIatFrontDesk:
         self.label_timeOut_tag.grid(row=0, column = 6, pady = (60,0),sticky=W)
 
         #insert date and times
-        self.gen_date.grid(row=0, column = 7,pady = (10,0),sticky=N)
-        self.gen_timeIn.grid(row=0, column = 7)
-        self.gen_timeOut.grid(row=0, column = 7, pady = (60,0))
+        self.gen_date.grid(row=0, column = 5,pady = (10,0),sticky=N)
+        self.gen_timeIn.grid(row=0, column = 5)
+        self.gen_timeOut.grid(row=0, column = 5, pady = (60,0))
 
         #2nd Row Layout Widgets
         columnum = 0
@@ -420,7 +420,7 @@ class GUIatFrontDesk:
 
         self.date_now = str(datetime.datetime.now().date())
         self.timeIn_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
-        self.gen_date.config(text = self.date_now )
+        self.gen_date.config(text = self.date_now)
         self.gen_timeIn.config(text = self.timeIn_now)
         self.label_scaleGross.config(text = str(self.gross_weight))
 
