@@ -237,14 +237,14 @@ class GUIatFrontDesk:
 
         #1st row labels
         self.label_image.grid(row=0,column=0,pady=(0,30),sticky=E)
-        self.label_date.grid(row=0, column = 6,pady = (10,0),sticky='nw')
-        self.label_timeIn_tag.grid(row=0, column = 6,sticky=W)
-        self.label_timeOut_tag.grid(row=0, column = 6, pady = (60,0),sticky=W)
+        self.label_date.grid(row=0, column = 5,pady = (10,0),sticky='nw')
+        self.label_timeIn_tag.grid(row=0, column = 5,sticky=W)
+        self.label_timeOut_tag.grid(row=0, column = 5, pady = (60,0),sticky=W)
 
         #insert date and times
-        self.gen_date.grid(row=0, column = 5,pady = (10,0),sticky=N)
-        self.gen_timeIn.grid(row=0, column = 5)
-        self.gen_timeOut.grid(row=0, column = 5, pady = (60,0))
+        self.gen_date.grid(row=0, column = 6,pady = (10,0),sticky=N)
+        self.gen_timeIn.grid(row=0, column = 6)
+        self.gen_timeOut.grid(row=0, column = 6, pady = (60,0))
 
         #2nd Row Layout Widgets
         columnum = 0
