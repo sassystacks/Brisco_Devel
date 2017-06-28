@@ -491,9 +491,8 @@ class GUIatFrontDesk:
         values = [WeighOut_dict[column] for column in columns]
 
         insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
-        strng = 'test'
-        print(self.cur1.mogrify(insert_statement, (AsIs(','.join(columns)), tuple(values), strng)))
-
+        strng = self.TM9_entry.get()
+        
         self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
 
 
