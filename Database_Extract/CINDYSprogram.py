@@ -16,9 +16,9 @@ class CindyProgram:
         self.master = master
 
         #Test commit
-        self.label_test = Label(self.master, text = 'Hi Cindy!!!', borderwidth=2,relief='raised')
-        self.label_test.grid(row=0,column=0)
-        self.label_test.config(font=("Courier", 44))
+        # self.label_test = Label(self.master, text = 'Hi Cindy!!!', borderwidth=2,relief='raised')
+        # self.label_test.grid(row=0,column=0)
+        # self.label_test.config(font=("Courier", 44))
 
 
         self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
