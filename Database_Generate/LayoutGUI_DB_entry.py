@@ -119,8 +119,8 @@ class GUIatFrontDesk:
         self.ButtonText = "Weigh\nIn"
         self.Bigbutton = Button(master, text=self.ButtonText,bg='green',command=self.buttonPress)
         # self.button_weighOut = Button(master, text="Weigh Out",bg='green',command=self.WeighOUT)
-        self.button_reset = Button(master, text ='Reset',command=self.Reset_button)
-        self.button_reset.config(width='10',height='8',activebackground='red')
+        # self.button_reset = Button(master, text ='Reset',command=self.Reset_button)
+        # self.button_reset.config(width='10',height='8',activebackground='red')
         self.Bigbutton.config(width='20',height='8',activebackground='red')
         # self.button_weighOut.config(width='20',height='8',activebackground='red')
 
@@ -237,14 +237,14 @@ class GUIatFrontDesk:
 
         #1st row labels
         self.label_image.grid(row=0,column=0,pady=(0,30),sticky=E)
-        self.label_date.grid(row=0, column = 6,pady = (10,0),sticky='nw')
-        self.label_timeIn_tag.grid(row=0, column = 6,sticky=W)
-        self.label_timeOut_tag.grid(row=0, column = 6, pady = (60,0),sticky=W)
+        self.label_date.grid(row=0, column = 5,pady = (10,0),sticky='nw')
+        self.label_timeIn_tag.grid(row=0, column = 5,sticky=W)
+        self.label_timeOut_tag.grid(row=0, column = 5, pady = (60,0),sticky=W)
 
         #insert date and times
-        self.gen_date.grid(row=0, column = 7,pady = (10,0),sticky=N)
-        self.gen_timeIn.grid(row=0, column = 7)
-        self.gen_timeOut.grid(row=0, column = 7, pady = (60,0))
+        self.gen_date.grid(row=0, column = 6,pady = (10,0),sticky=N)
+        self.gen_timeIn.grid(row=0, column = 6)
+        self.gen_timeOut.grid(row=0, column = 6, pady = (60,0))
 
         #2nd Row Layout Widgets
         columnum = 0
@@ -304,10 +304,15 @@ class GUIatFrontDesk:
         columnum = columnum+1
         # self.button_weighOut.grid(row=7,column=columnum,pady=100)
         # columnum = columnum+1
-        self.button_reset.grid(row=7,column=7,pady=100)
+        # self.button_reset.grid(row=7,column=7,pady=100)
         self.In.grid(row=7,column=columnum)
         columnum = columnum+1
         self.Out.grid(row=7,column=columnum)
+        '''
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~ Destroy Process ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        '''
+
+        self.master.bind('<Escape>', lambda e: root.destroy())
 
     def buttonPress(self):
 
@@ -327,13 +332,6 @@ class GUIatFrontDesk:
             self.WeighOUTfill()
 
         self.Bigbutton.config(text=self.ButtonText )
-
-    def WeighOUTfill(self):
-        pass
-
-    def CreateLists(self):
-        pass
-
 
     def DB_Search_n_Fill(self, event, strg, DB_instance):
         t_list_FMA = []
@@ -403,19 +401,20 @@ class GUIatFrontDesk:
         self.label_scaleGross.config(text = '----')
         self.gen_date.config(text = '----')
 
+
     def WeighIN(self):
 
         try:
             ser = serial.Serial('/dev/ttyUSB0',9600)
             str_weight = ser.readline()
             self.gross_weight =  str_weight.split()[1]
-
+            self.gross_weight =int(self.gross_weight)
         except:
             self.gross_weight =  100
 
         self.date_now = str(datetime.datetime.now().date())
         self.timeIn_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
-        self.gen_date.config(text = self.date_now )
+        self.gen_date.config(text = self.date_now)
         self.gen_timeIn.config(text = self.timeIn_now)
         self.label_scaleGross.config(text = str(self.gross_weight))
 
@@ -460,14 +459,13 @@ class GUIatFrontDesk:
         insert_statement = 'INSERT INTO testscale (%s) VALUES %s'
 
         self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
-        # print self.cur1.mogrify(insert_statement, (AsIs(','.join(columns)), tuple(values)))
 
     def WeighOUT(self):
         try:
             ser = serial.Serial('/dev/ttyUSB0',9600)
             str_weight = ser.readline()
             self.tare_weight =  str_weight.split()[1]
-            self.net_weight = self.gross_weight-self.tare_weight
+            self.net_weight = int(self.gross_weight)-int(self.tare_weight)
         except:
             self.tare_weight = 50
             self.net_weight = self.gross_weight-self.tare_weight
@@ -476,6 +474,7 @@ class GUIatFrontDesk:
         self.gen_timeOut.config(text = timeOut_now)
         self.label_scaleTare.config(text = str(self.tare_weight))
         self.label_scaleNet.config(text = str(self.net_weight))
+
         WeighOut_dict = {
                     'tareweight': self.tare_weight,
                     'netweight' : self.net_weight,
@@ -485,14 +484,15 @@ class GUIatFrontDesk:
         columns = WeighOut_dict.keys()
         values = [WeighOut_dict[column] for column in columns]
 
-        insert_statement = 'INSERT INTO testscale (%s) VALUES %s'
+        insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
+        strng = self.TM9_entry.get()
 
-        self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
+        self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
+
 
     def WritetoDB(self):
 
         self.cur1.execute(sql.SQL("SELECT * FROM trucker_db WHERE {} = %s;").format(sql.Identifier(strg)), (selection_val,))
-
 
 '''
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -503,6 +503,6 @@ class GUIatFrontDesk:
 root = Tk()
 
 A = GUIatFrontDesk(root)
-# root.attributes('-fullscreen',True)
-root.geometry("1200x700")
+root.attributes('-fullscreen',True)
+# root.geometry("1200x800")
 root.mainloop()

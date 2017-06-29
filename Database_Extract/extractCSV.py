@@ -22,8 +22,8 @@ class ExtractCSV:
         # date2 = dt.date(self.year,self.month+1,1)
         # exec_statement = """SELECT * from {self.sheet_name}"""
         self.cur.execute("""SELECT *
-                            FROM barkieshauling_2016_2017
-                            WHERE date_entered::date >= %s AND date_entered::date <%s;""",(dt.date(self.year,self.month,1),
+                            FROM barkies_db
+                            WHERE daterecieved::date >= %s AND daterecieved::date <%s;""",(dt.date(self.year,self.month,1),
                             dt.date(self.year,self.month+1,1)))
         full_DB_list = self.cur.fetchall()
         millnum=8641
@@ -43,7 +43,7 @@ class ExtractCSV:
                 sample = 'N'
             b[-1] = sample
             lst_gov.append(b)
-            
+
 
 
         with open(self.fname, "wb") as f:
