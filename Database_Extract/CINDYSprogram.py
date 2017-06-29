@@ -10,8 +10,16 @@ from psycopg2.extensions import AsIs
 class CindyProgram:
     def __init__(self,master):
 
+
+
         cwd = os.getcwd()
         self.master = master
+
+        #Test commit
+        self.label_test = Label(self.master, text = 'Hi Cindy!!!', borderwidth=2,relief='raised')
+        self.label_test.grid(row=0,column=0)
+        self.label_test.config(font=("Courier", 44))
+
 
         self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
         self.cur1 = self.Connect_Brisco_DB.crsr()
@@ -19,9 +27,13 @@ class CindyProgram:
         self.img = Image.open("Brisco_logo.png")
         self.tk_img = ImageTk.PhotoImage(self.img)
 
+        # self.frame1 = Frame(self.master,borderwidth =5,relief='raised')
+        # self.frame1.grid(column=0, row=0,padx=50)
+        # self.label_image = Label(self.frame1,image=self.tk_img,borderwidth=2,relief='raised')
+        # #Layout Widgets frame 1
+        # self.label_image.grid(row=1,column=0,sticky=E,pady=70,padx=70)
         #initialize frames
-        self.frame1 = Frame(self.master,borderwidth =5,relief='raised')
-        self.frame1.grid(column=0, row=0,padx=50)
+
         self.frame2 = Frame(self.master,borderwidth =2,relief='raised',padx=50,pady=20)
         self.frame2.grid(column=0, row=1)
         self.frame3 = Frame(self.master,borderwidth =5,relief='raised')
@@ -30,7 +42,7 @@ class CindyProgram:
         self.frame4.grid(row=1,column=1,sticky='nsew',pady=50)
 
         # Label Widgets
-        self.label_image = Label(self.frame1,image=self.tk_img,borderwidth=2,relief='raised')
+
         self.label_year = Label(self.frame2,text ="Year")
         self.label_month = Label(self.frame2,text ="Month")
         self.label_day = Label(self.frame2,text ="Day")
@@ -59,9 +71,6 @@ class CindyProgram:
 
         self.Dir_entry_row = 1
         self.Fname_entry_row = 2
-
-        #Layout Widgets frame 1
-        self.label_image.grid(row=1,column=0,sticky=E,pady=70,padx=70)
 
         #Layout Widgets frame 2
         self.label_folder.grid(row=1,column=0,sticky=W)
