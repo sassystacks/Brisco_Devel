@@ -311,6 +311,7 @@ class GUIatFrontDesk:
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~ Destroy Process ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
+
         self.master.bind('<Escape>', lambda e: root.destroy())
 
     def buttonPress(self):
@@ -331,13 +332,6 @@ class GUIatFrontDesk:
             self.WeighOUTfill()
 
         self.Bigbutton.config(text=self.ButtonText )
-
-    def WeighOUTfill(self):
-        pass
-
-    def CreateLists(self):
-        pass
-
 
     def DB_Search_n_Fill(self, event, strg, DB_instance):
         t_list_FMA = []
@@ -465,7 +459,6 @@ class GUIatFrontDesk:
         insert_statement = 'INSERT INTO testscale (%s) VALUES %s'
 
         self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
-        # print self.cur1.mogrify(insert_statement, (AsIs(','.join(columns)), tuple(values)))
 
     def WeighOUT(self):
         try:
@@ -481,6 +474,7 @@ class GUIatFrontDesk:
         self.gen_timeOut.config(text = timeOut_now)
         self.label_scaleTare.config(text = str(self.tare_weight))
         self.label_scaleNet.config(text = str(self.net_weight))
+
         WeighOut_dict = {
                     'tareweight': self.tare_weight,
                     'netweight' : self.net_weight,
@@ -492,7 +486,7 @@ class GUIatFrontDesk:
 
         insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
         strng = self.TM9_entry.get()
-        
+
         self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
 
 

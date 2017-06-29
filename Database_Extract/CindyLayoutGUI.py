@@ -5,6 +5,7 @@ from Connect_Brisco_DB import Connect_DB
 from extractCSV import ExtractCSV
 from datetime import datetime, date, time
 from PIL import Image, ImageTk
+from psycopg2.extensions import AsIs
 
 class CindyProgram:
     def __init__(self,master):
@@ -110,6 +111,7 @@ class CindyProgram:
         labellist = ['TM9','Total Volume Barkies','Avg pc Barkies','Net Wgt',
                     '# of Pcs','conversions','Total Volume SawLogs','Avg pc Sawlogs',
                     'Sawlogs/Returns','Pole Material','rejects']
+
         self.label_frame4 = Label(self.frame4, text='Input Scaler Data',relief='sunken')
         indx = 0
         self.inputTM9_label = Label(self.frame4, text = str(labellist[indx]),padx=10)
@@ -215,10 +217,34 @@ class CindyProgram:
         pass
 
     def EnterScaler(self):
-        pass
+        Update_Scaler_keys = ['numpcsreceived' ,
+          'logsreject'  ,
+          'totalvol'  ,
+          'avgpc'  ,
+          'conversion'  ,
+          'totalvolsaw' ,
+          'avgpcsaw'   ,
+          'returnssaw'  ,
+          'polemat' ]
+        Update_Scaler_values = [self.numPcs_enter.get(),self.rejects_enter.get(),self.TotalVol_enter.get(),
+                                self.AvgpcBark_enter.get(),self.Conversion_enter.get(),self.TotV_enter.get(),
+                                self.AvgpcSaw_enter.get(),self.returns_enter.get(),self.poleMat_enter.get()]
+        Update_Scaler_values  = [x if x!= '' else 'NULL' for x in Update_Scaler_values ]
+        print Update_Scaler_values
+        dictionary = dict(zip(Update_Scaler_keys, Update_Scaler_values))
+        columns = dictionary.keys()
+        values = [dictionary[column] for column in columns]
+        insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
+        strng = self.inputTM9_enter.get()
+        print self.cur1.mogrify(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
+
 
     def killProcess(self):
         pass
+
+    def confirm(self):
+        pass
+
 def main():
     root = Tk()
     root.geometry("1300x700")
