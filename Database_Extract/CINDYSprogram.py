@@ -16,9 +16,9 @@ class CindyProgram:
         self.master = master
 
         #Test commit
-        # self.label_test = Label(self.master, text = 'Hi Cindy!!!', borderwidth=2,relief='raised')
-        # self.label_test.grid(row=0,column=0)
-        # self.label_test.config(font=("Courier", 44))
+        self.label_test = Label(self.master, text = 'Hi Cindy!!!', borderwidth=2,relief='raised')
+        self.label_test.grid(row=0,column=0)
+        self.label_test.config(font=("Courier", 44))
 
 
         self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
@@ -27,11 +27,11 @@ class CindyProgram:
         self.img = Image.open("Brisco_logo.png")
         self.tk_img = ImageTk.PhotoImage(self.img)
 
-        self.frame1 = Frame(self.master,borderwidth =5,relief='raised')
-        self.frame1.grid(column=0, row=0,padx=50)
-        self.label_image = Label(self.frame1,image=self.tk_img,borderwidth=2,relief='raised')
-        #Layout Widgets frame 1
-        self.label_image.grid(row=1,column=0,sticky=E,pady=70,padx=70)
+        # self.frame1 = Frame(self.master,borderwidth =5,relief='raised')
+        # self.frame1.grid(column=0, row=0,padx=50)
+        # self.label_image = Label(self.frame1,image=self.tk_img,borderwidth=2,relief='raised')
+        # #Layout Widgets frame 1
+        # self.label_image.grid(row=1,column=0,sticky=E,pady=70,padx=70)
         #initialize frames
 
         self.frame2 = Frame(self.master,borderwidth =2,relief='raised',padx=50,pady=20)
