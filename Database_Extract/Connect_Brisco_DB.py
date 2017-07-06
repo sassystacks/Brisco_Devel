@@ -12,6 +12,7 @@ class Connect_DB:
         connection_str = "dbname='{self.dbname}' user='{self.user}' host='{self.host}' password='{self.psswrd}'" .format(self=self)
         try:
             self.conn = psycopg2.connect(connection_str)
+            self.conn.autocommit = True
         except:
             print "Unable to connect to the database"
         return self.conn

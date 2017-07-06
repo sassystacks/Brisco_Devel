@@ -12,7 +12,7 @@ class CindyProgram:
 
         cwd = os.getcwd()
         self.master = master
-
+        # self.DBstring = 'testscale'
         self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
         self.cur1 = self.Connect_Brisco_DB.crsr()
 
@@ -82,8 +82,8 @@ class CindyProgram:
         self.label_frame3= Label(self.frame3,text='Edit Database',relief='sunken')
         self.label_frame3.grid(row=0, column=1,pady=25)
 
-        Edit_DD_lst = ['Date','Population','Load Slip #','Sample Load','TM9 Ticket','Owner',
-            'Hauling Contractor','Working Circle','Block #','Logging Co.','Truck License Plate #',
+        Edit_DD_lst = ['Block #','Date','Population','Load Slip #','Sample Load','TM9 Ticket','Owner',
+            'Hauling Contractor','Working Circle','Logging Co.','Truck License Plate #',
             'Truck #','Truck Axle','Gross Weight','Tare Weight','Net Weight','Disposition/FMA #']
 
         #Labels for frame 3
@@ -229,15 +229,13 @@ class CindyProgram:
         Update_Scaler_values = [self.numPcs_enter.get(),self.rejects_enter.get(),self.TotalVol_enter.get(),
                                 self.AvgpcBark_enter.get(),self.Conversion_enter.get(),self.TotV_enter.get(),
                                 self.AvgpcSaw_enter.get(),self.returns_enter.get(),self.poleMat_enter.get()]
-        Update_Scaler_values  = [x if x!= '' else 'NULL' for x in Update_Scaler_values ]
-        print Update_Scaler_values
+        Update_Scaler_values  = [x if x!= '' else None for x in Update_Scaler_values ]
         dictionary = dict(zip(Update_Scaler_keys, Update_Scaler_values))
         columns = dictionary.keys()
         values = [dictionary[column] for column in columns]
         insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
         strng = self.inputTM9_enter.get()
-        print self.cur1.mogrify(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
-
+        self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
 
     def killProcess(self):
         pass
