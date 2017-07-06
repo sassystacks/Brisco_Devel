@@ -10,23 +10,11 @@ from psycopg2.extensions import AsIs
 class CindyProgram:
     def __init__(self,master):
 
-
-
         cwd = os.getcwd()
         self.master = master
-<<<<<<< HEAD:Database_Extract/CindyLayoutGUI.py
-        # self.DBstring = 'testscale'
-=======
 
-        #Test commit
-        # self.label_test = Label(self.master, text = 'Hi Cindy!!!', borderwidth=2,relief='raised')
-        # self.label_test.grid(row=0,column=0)
-        # self.label_test.config(font=("Courier", 44))
-
-
->>>>>>> d6a7ed997de6180b342dfad8f45a4ed213771faa:Database_Extract/CINDYSprogram.py
-        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
-        self.cur1 = self.Connect_Brisco_DB.crsr()
+        # self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
+        # self.cur1 = self.Connect_Brisco_DB.crsr()
 
         self.img = Image.open("Brisco_logo.png")
         self.tk_img = ImageTk.PhotoImage(self.img)
@@ -95,9 +83,9 @@ class CindyProgram:
         self.label_frame3= Label(self.frame3,text='Edit Database',relief='sunken')
         self.label_frame3.grid(row=0, column=1,pady=25)
 
-        Edit_DD_lst = ['Block #','Date','Population','Load Slip #','Sample Load','TM9 Ticket','Owner',
-            'Hauling Contractor','Working Circle','Logging Co.','Truck License Plate #',
-            'Truck #','Truck Axle','Gross Weight','Tare Weight','Net Weight','Disposition/FMA #']
+        self.Edit_DD_lst = ['Block #','Date','Population','Load Slip #','Sample Load','TM9 Ticket','Owner',
+            'Disposition/FMA #','Working Circle','Logging Co.','Hauling Contractor','Truck License Plate #',
+            'Truck #','Truck Axle','Gross Weight','Tare Weight','Net Weight']
 
         #Labels for frame 3
         self.label_searchBy = Label(self.frame3,text='TM9 to Search for')
@@ -107,7 +95,7 @@ class CindyProgram:
         #Widgets for menus for frame 3
         self.confirmEdit = Button(self.frame3, text = 'Confirm\nEdit',command=self.EditDB,bg='green')
         self.var_for_edit = StringVar()
-        self.dd_edit_db = self.Create_DropDown(self.var_for_edit, Edit_DD_lst,self.frame3)
+        self.dd_edit_db = self.Create_DropDown(self.var_for_edit, self.Edit_DD_lst,self.frame3)
         self.enterTM9_forEdit = Entry(self.frame3)
         self.replace_val = Entry(self.frame3)
 
@@ -227,7 +215,47 @@ class CindyProgram:
         return DDmenu
 
     def EditDB(self):
-        pass
+        DB_list = ['blocknum',
+                    'daterecieved',
+                    'poploadslip',
+                    'count',
+                    'sampleloads' ,
+                    'tm9_ticket',
+                    'owner' ,
+                    'disposition_fmanum' ,
+                    'workingcircle' ,
+                    'loggingco' ,
+                    'haulingcontractor',
+                    'truckplate',
+                    'trucknum' ,
+                    'truckaxle' ,
+                    'grossweight',
+                    'tareweight',
+                    'netweight',]
+
+        list_for_int = [
+                    'poploadslip',
+                    'count',
+                    'truckaxle' ,
+                    'grossweight',
+                    'tareweight',
+                    'netweight',]
+
+        get_val = self.replace_val.get()
+        dict_for_Edit = dict(zip(self.Edit_DD_lst,DB_list))
+        val_to_chng = dict_for_Edit[self.var_for_edit.get()]
+        is_int = [int(get_val) for x in list_for_int if val_to_chng in x]
+
+        if not is_int:
+            final_replace = get_val
+
+        else:
+            final_replace = is_int[0]
+
+        insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
+        TM9_strng = self.enterTM9_forEdit.get()
+        print self.cur1.mogrify(insert_statement, (AsIs(','.join(val_to_chng)), tuple(get_val), TM9_strng))
+
 
     def EnterScaler(self):
         Update_Scaler_keys = ['numpcsreceived' ,

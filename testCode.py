@@ -1,43 +1,14 @@
-from Tkinter import *
+strng = 'test1'
+dict_test_keys = ['test1','test2','test3','test4','test5' ]
+dict_test_values = ['1','2','3','4','5' ]
 
+list_turn_int = ['test1','test2','test5']
+dict_test = dict(zip(dict_test_keys,dict_test_values))
 
-
-class TestButton:
-
-    def __init__(self,root):
-        self.v = IntVar()
-        self.v.set(1)
-        self.A=Radiobutton(master, text="One", variable=self.v, value=1, command=self.changetext).pack(anchor=W)
-        self.B=Radiobutton(master, text="Two", variable=self.v, value=2, command=self.changetext).pack(anchor=W)
-
-        self.a ="Func1"
-        self.Bigbutton = Button(master,text=self.a, command=self.buttonFunc)
-        # self.Bigbutton.bind("<Button-1>", lambda event: self.buttonFunc(event,self.v.get()))
-        self.Bigbutton.pack()
-
-    def buttonFunc(self):
-        if self.v.get()==1:
-            self.buttonFunc1()
-        else:
-            self.buttonFunc2()
-
-    def buttonFunc1(self):
-        self.a = "Func1"
-        print(self.a )
-
-    def buttonFunc2(self):
-
-        print(self.a )
-
-    def changetext(self):
-        if self.v.get()==1:
-
-            self.a="Func1"
-        else:
-            self.a = "Func2"
-        print(self.v.get())
-        self.Bigbutton.config(text=self.a)
-
-master = Tk()
-A = TestButton(master)
-master.mainloop()
+print dict_test
+a = dict_test[strng]
+print(a)
+print(type(a))
+b = [int(x) for x in dict_test_values if a in x]
+print(b[0])
+print(type(b[0]))
