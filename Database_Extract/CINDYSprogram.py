@@ -11,10 +11,11 @@ class CindyProgram:
     def __init__(self,master):
 
         cwd = os.getcwd()
+
         self.master = master
 
-        # self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
-        # self.cur1 = self.Connect_Brisco_DB.crsr()
+        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
+        self.cur1 = self.Connect_Brisco_DB.crsr()
 
         self.img = Image.open("Brisco_logo.png")
         self.tk_img = ImageTk.PhotoImage(self.img)
@@ -254,7 +255,8 @@ class CindyProgram:
 
         insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
         TM9_strng = self.enterTM9_forEdit.get()
-        print self.cur1.mogrify(insert_statement, (AsIs(','.join(val_to_chng)), tuple(get_val), TM9_strng))
+        print self.cur1.mogrify(insert_statement, (AsIs(val_to_chng), (get_val,), TM9_strng))
+        self.cur1.execute(insert_statement, (AsIs(val_to_chng), (get_val,), TM9_strng))
 
 
     def EnterScaler(self):
