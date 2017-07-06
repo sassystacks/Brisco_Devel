@@ -13,8 +13,8 @@ class CindyProgram:
         cwd = os.getcwd()
         self.master = master
 
-        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
-        self.cur1 = self.Connect_Brisco_DB.crsr()
+        # self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
+        # self.cur1 = self.Connect_Brisco_DB.crsr()
 
         self.img = Image.open("Brisco_logo.png")
         self.tk_img = ImageTk.PhotoImage(self.img)
