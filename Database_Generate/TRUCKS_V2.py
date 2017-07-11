@@ -95,7 +95,7 @@ class GUIatFrontDesk:
         #labels
         colm = 0
         rown = 0
-        f2_lst_labels = ["Truck #","Hauling Contractor","License Plate ","Truck Axle"]
+        f2_lst_labels = ["Truck #","License Plate ","Hauling Contractor","Truck Axle"]
 
         for strng in f2_lst_labels:
             if rown==0:
@@ -105,20 +105,20 @@ class GUIatFrontDesk:
             self.create_place_label(framenum,strng,rown,colm,("Courier", fnt_size,"bold"),W)
             rown = rown + 1
 
-        List_frame2 = self.initializeLists('trucker_db')
+        List_frame2 = self.initializeLists('truckers_db')
         # self.List_frame2 = sorted(initializeLists)
         List_test = ['test1','test2','test3','test4']
         #Menus
         rown = 0
         colm = 1
         pddx = None
-        self.truckNum_combo = self.create_place_combo(framenum,self.init_list_truck[0],self.truckNum_combo_val,rown,colm,("Courier", 20,"bold"),"trucknum",W,pddx)
+        self.truckNum_combo = self.create_place_combo(framenum,self.init_list_truck[0],self.truckNum_combo_val,rown,colm,("Courier", 20,"bold"),"truck",W,pddx)
         rown = rown + 1
-        self.hauledBy_combo = self.create_place_combo(framenum,self.init_list_truck[1],self.hauledBy_combo_val,rown,colm,("Courier", 16,"bold"),"haulingcontractor",W,pddx)
+        self.truckLicense_combo = self.create_place_combo(framenum,self.init_list_truck[1],self.truckLicense_combo_val,rown,colm,("Courier", 16,"bold"),"truck",W,pddx)
         rown = rown + 1
-        self.truckLicense_combo = self.create_place_combo(framenum,self.init_list_truck[2],self.truckLicense_combo_val,rown,colm,("Courier", 16,"bold"),"trucklicense",W,pddx)
+        self.hauledBy_combo = self.create_place_combo(framenum,self.init_list_truck[2],self.hauledBy_combo_val,rown,colm,("Courier", 16,"bold"),"truck",W,pddx)
         rown = rown + 1
-        self.axle_combo = self.create_place_combo(framenum,self.init_list_truck[3],self.axle_combo_val,rown,colm,("Courier", 16,"bold"),"axlenum",W,pddx)
+        self.axle_combo = self.create_place_combo(framenum,self.init_list_truck[3],self.axle_combo_val,rown,colm,("Courier", 16,"bold"),"truck",W,pddx)
 
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~  Frame 3  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,12 +141,12 @@ class GUIatFrontDesk:
         pddx = None
         self.owner_combo = self.create_place_combo(framenum,self.init_list_owner[0],self.owner_combo_val,rown,colm,("Courier", 20,"bold"),"owner",W,pddx)
         rown = rown + 1
-        self.FMA_combo = self.create_place_combo(framenum,self.init_list_owner[1],self.FMA_combo_val,rown,colm,("Courier", 16,"bold"),"FMA",W,pddx)
+        self.FMA_combo = self.create_place_combo(framenum,self.init_list_owner[1],self.FMA_combo_val,rown,colm,("Courier", 16,"bold"),"owner",W,pddx)
         rown = rown + 1
-        self.wCircle_combo = self.create_place_combo(framenum,self.init_list_owner[2],self.wCircle_combo_val,rown,colm,("Courier", 16,"bold"),"Working Circle",W,pddx)
+        self.wCircle_combo = self.create_place_combo(framenum,self.init_list_owner[2],self.wCircle_combo_val,rown,colm,("Courier", 16,"bold"),"owner",W,pddx)
         rown = rown + 1
-        self.loggingCo_combo = self.create_place_combo(framenum,self.init_list_owner[3],self.loggingCo_combo_val,rown,colm,("Courier", 16,"bold"),"loggingcontractor",W,pddx)
-        rown = rown + 1
+        # self.loggingCo_combo = self.create_place_combo(framenum,self.init_list_owner[3],self.loggingCo_combo_val,rown,colm,("Courier", 16,"bold"),"loggingcontractor",W,pddx)
+        # rown = rown + 1
 
 
         '''
@@ -231,7 +231,7 @@ class GUIatFrontDesk:
     '''
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GUI Methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     '''
-    def WeighIN(self):
+    def weighIN(self):
 
         try:
             ser = serial.Serial('/dev/ttyUSB0',9600)
@@ -290,23 +290,25 @@ class GUIatFrontDesk:
         self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
 
 
-    def WeighOUT(self):
+    def weighOUT(self):
         pass
 
     def update_lists(self,event,strng,name_combo,Lst):
 
         var_Selected = name_combo.current()
+        
         if strng == 'owner':
             self.owner_combo.set(self.init_list_owner[0][var_Selected])
             self.FMA_combo.set(self.init_list_owner[1][var_Selected])
             self.wCircle_combo.set(self.init_list_owner[2][var_Selected])
-            self.loggingCo_combo.set(self.init_list_owner[3][var_Selected])
+            # self.loggingCo_combo.set(self.init_list_owner[3][var_Selected])
 
         elif strng == 'truck':
-            self.owner_combo.set(self.init_list_owner[0][var_Selected])
-            self.FMA_combo.set(self.init_list_owner[1][var_Selected])
-            self.wCircle_combo.set(self.init_list_owner[2][var_Selected])
-            self.loggingCo_combo.set(self.init_list_owner[3][var_Selected])
+            self.truckNum_combo.set(self.init_list_truck[0][var_Selected])
+            self.truckLicense_combo.set(self.init_list_truck[1][var_Selected])
+            self.hauledBy_combo.set(self.init_list_truck[2][var_Selected])
+            self.axle_combo.set(self.init_list_truck[3][var_Selected])
+            # self.loggingCo_combo.set(self.init_list_owner[3][var_Selected])
 
     def initializeLists(self,table):
 
@@ -332,9 +334,10 @@ class GUIatFrontDesk:
         name_combo.grid(row=rownum, column=columnum,sticky=stcky,padx=pdx)
         name_combo.config(font=fnt)
         name_combo['values'] = Lst
-        name_combo.set(Lst[0])
+        name_combo.set(Lst[1])
         # self.owner_combo.bind("<<ComboboxSelected>>",lambda event: self.DB_Search_n_Fill(event,"owner",self.Connect_Brisco_DB))
         name_combo.bind("<<ComboboxSelected>>", lambda event: self.update_lists(event,strng,name_combo,Lst))
+        return name_combo
 
     def create_place_dropdown(self, frme, DD_lst, ddVal, rownum, columnum, fnt,stcky,pdx):
 
