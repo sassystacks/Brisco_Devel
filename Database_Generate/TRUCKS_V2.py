@@ -105,8 +105,8 @@ class GUIatFrontDesk:
             self.create_place_label(framenum,strng,rown,colm,("Courier", fnt_size,"bold"),W)
             rown = rown + 1
 
-        List_frame2 = self.get_lists('trucker_db')
-        # self.List_frame2 = sorted(get_lists)
+        List_frame2 = self.initializeLists('trucker_db')
+        # self.List_frame2 = sorted(initializeLists)
         List_test = ['test1','test2','test3','test4']
         #Menus
         rown = 0
