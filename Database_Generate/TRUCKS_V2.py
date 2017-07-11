@@ -1,5 +1,6 @@
 from Tkinter import *
 import ttk, tkFont
+import itertools
 
 class GUIatFrontDesk:
 
@@ -7,6 +8,14 @@ class GUIatFrontDesk:
 
         from PIL import Image, ImageTk
         self.master = master
+        '''
+        ~~~~~~~~~~~~~~~ Connect to Database and initialize Listst ~~~~~~~~~~~~~~
+        '''
+        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
+        self.cur1 = self.Connect_Brisco_DB.crsr()
+
+        self.init_list_truck = self.initializeLists('truckers_db')
+        self.init_list_owner = self.initializeLists('owner_db')
 
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~ Initialize Frames ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -97,13 +106,13 @@ class GUIatFrontDesk:
         rown = 0
         colm = 1
         pddx = None
-        self.truckNum_combo = self.create_place_combo(framenum,List_test,self.truckNum_combo_val,rown,colm,("Courier", 20,"bold"),"trucknum",W,pddx)
+        self.truckNum_combo = self.create_place_combo(framenum,self.init_list_truck[0],self.truckNum_combo_val,rown,colm,("Courier", 20,"bold"),"trucknum",W,pddx)
         rown = rown + 1
-        self.hauledBy_combo = self.create_place_combo(framenum,List_test,self.hauledBy_combo_val,rown,colm,("Courier", 16,"bold"),"haulingcontractor",W,pddx)
+        self.hauledBy_combo = self.create_place_combo(framenum,self.init_list_truck[1],self.hauledBy_combo_val,rown,colm,("Courier", 16,"bold"),"haulingcontractor",W,pddx)
         rown = rown + 1
-        self.truckLicense_combo = self.create_place_combo(framenum,List_test,self.truckLicense_combo_val,rown,colm,("Courier", 16,"bold"),"trucklicense",W,pddx)
+        self.truckLicense_combo = self.create_place_combo(framenum,self.init_list_truck[2],self.truckLicense_combo_val,rown,colm,("Courier", 16,"bold"),"trucklicense",W,pddx)
         rown = rown + 1
-        self.axle_combo = self.create_place_combo(framenum,List_test,self.axle_combo_val,rown,colm,("Courier", 16,"bold"),"axlenum",W,pddx)
+        self.axle_combo = self.create_place_combo(framenum,self.init_list_truck[3],self.axle_combo_val,rown,colm,("Courier", 16,"bold"),"axlenum",W,pddx)
 
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~  Frame 3  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -124,13 +133,13 @@ class GUIatFrontDesk:
         rown = 0
         colm = 1
         pddx = None
-        self.owner_combo = self.create_place_combo(framenum,List_test,self.owner_combo_val,rown,colm,("Courier", 20,"bold"),"owner",W,pddx)
+        self.owner_combo = self.create_place_combo(framenum,self.init_list_owner[0],self.owner_combo_val,rown,colm,("Courier", 20,"bold"),"owner",W,pddx)
         rown = rown + 1
-        self.FMA_combo = self.create_place_combo(framenum,List_test,self.FMA_combo_val,rown,colm,("Courier", 16,"bold"),"FMA",W,pddx)
+        self.FMA_combo = self.create_place_combo(framenum,self.init_list_owner[1],self.FMA_combo_val,rown,colm,("Courier", 16,"bold"),"FMA",W,pddx)
         rown = rown + 1
-        self.wCircle_combo = self.create_place_combo(framenum,List_test,self.wCircle_combo_val,rown,colm,("Courier", 16,"bold"),"Working Circle",W,pddx)
+        self.wCircle_combo = self.create_place_combo(framenum,self.init_list_owner[2],self.wCircle_combo_val,rown,colm,("Courier", 16,"bold"),"Working Circle",W,pddx)
         rown = rown + 1
-        self.loggingCo_combo = self.create_place_combo(framenum,List_test,self.loggingCo_combo_val,rown,colm,("Courier", 16,"bold"),"loggingcontractor",W,pddx)
+        self.loggingCo_combo = self.create_place_combo(framenum,self.init_list_owner[3],self.loggingCo_combo_val,rown,colm,("Courier", 16,"bold"),"loggingcontractor",W,pddx)
         rown = rown + 1
 
 
@@ -163,10 +172,13 @@ class GUIatFrontDesk:
         rown = 0
         f6_lst_labels = ["Date: ","Time in: ","Time out: ","Gross Weight: ","Tare Weight: ","Net Weight: ","Load Slip #: "]
 
+        self.dict_labels = {}
         for strng in f6_lst_labels:
             self.create_place_label(framenum,strng,rown,colm,("Courier", 16),E)
             self.create_place_label(framenum,'-------',rown,colm+1,("Courier", 16),E)
             rown = rown + 1
+
+
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~  Frame 6  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
@@ -194,17 +206,15 @@ class GUIatFrontDesk:
         self.label_image = Label(framenum,image=self.tk_img ,relief='groove')
         self.label_image.config(height = 250, width =250)
         self.label_image.grid(row = 0, column = 0, columnspan=2)
-        # self.TrucksInYardlabel= Label(framenum, text = "Trucks\nTo\nWeigh Out")
-        # # self.TrucksInYardlabel.config(font=("Courier", 16,"bold"))
-        # self.TrucksInYardlabel.pack(side=TOP)
+
         pddx = 20
         pddy = (150,0)
         dimh = 8
         dimw = 10
         rown = 1
         colm = 0
-        self.WeighIN = self.create_place_button(framenum, 'Weigh\nIn', rown, colm, ("Courier", 16, "bold"),pddy,pddx,dimh,dimw,W)
-        self.WeighOUT = self.create_place_button(framenum, 'Weigh\nOut', rown, colm+1, ("Courier", 16, "bold"),pddy,pddx,dimh,dimw,E)
+        self.WeighIN = self.create_place_button(framenum, 'Weigh\nIn', rown, colm, ("Courier", 16, "bold"),pddy,pddx,dimh,dimw,W,self.weighIN)
+        self.WeighOUT = self.create_place_button(framenum, 'Weigh\nOut', rown, colm+1, ("Courier", 16, "bold"),pddy,pddx,dimh,dimw,E,self.weighOUT)
 
 
         '''
@@ -215,11 +225,97 @@ class GUIatFrontDesk:
     '''
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GUI Methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     '''
+    def WeighIN(self):
+
+        try:
+            ser = serial.Serial('/dev/ttyUSB0',9600)
+            str_weight = ser.readline()
+            self.gross_weight =  str_weight.split()[1]
+            self.gross_weight =int(self.gross_weight)
+        except:
+            self.gross_weight =  100
+
+        self.date_now = str(datetime.datetime.now().date())
+        self.timeIn_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
+        self.gen_date.config(text = self.date_now)
+        self.gen_timeIn.config(text = self.timeIn_now)
+        self.label_scaleGross.config(text = str(self.gross_weight))
+
+        self.cur1.execute(sql.SQL("SELECT poploadslip,count FROM testscale WHERE {} = %s;").format(sql.Identifier('poploadslip')), (self.popLoad_DD_val.get(),))
+        a = self.cur1.fetchall()
+
+        try:
+            self.new_popCount = int(a[-1][1])+1
+        except:
+            self.new_popCount = 1
+        self.label_popCount.config(text = str(self.new_popCount) )
+
+        if self.sample_DD_Val.get()=='No':
+            binary_sample = 0
+        else:
+            binary_sample = 1
+
+        #update Data base
+        Weighin_dict = {
+                    'daterecieved': self.date_now,
+                    'poploadslip' : int(self.popLoad_DD_val.get()),
+                    'count' : self.new_popCount,
+                    'sampleloads' : binary_sample,
+                    'tm9_ticket' : self.TM9_entry.get(),
+                    'owner' : self.owner_combo_val.get(),
+                    'disposition_fmanum' : self.FMA_combo_val.get(),
+                    'workingcircle' : self.wCircle_combo_val.get(),
+                    'blocknum' : self.block_entry.get(),
+                    'loggingco' : self.logCo_combo_val.get(),
+                    'haulingcontractor' : self.hauledBy_combo_val.get(),
+                    'truckplate' : self.truckLicense_combo_val.get(),
+                    'trucknum' : self.truckNum_combo_val.get(),
+                    'truckaxle' : int(self.axle_DD_Val.get()),
+                    'grossweight' : self.gross_weight,
+                    'timeIn'  :     self.timeIn_now,
+
+                   }
+
+        columns = Weighin_dict.keys()
+        values = [Weighin_dict[column] for column in columns]
+
+        insert_statement = 'INSERT INTO testscale (%s) VALUES %s'
+
+        self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
+
+
+    def WeighOUT(self):
+        pass
+
+    def update_lists(self,event,strng,name_combo,Lst):
+
+        var_Selected = name_combo.current()
+        if strng == 'owner':
+            self.owner_combo.set(self.init_list_owner[0][var_Selected])
+            self.FMA_combo.set(self.init_list_owner[1][var_Selected])
+            self.wCircle_combo.set(self.init_list_owner[2][var_Selected])
+            self.loggingCo_combo.set(self.init_list_owner[3][var_Selected])
+
+        elif strng == 'truck':
+            self.owner_combo.set(self.init_list_owner[0][var_Selected])
+            self.FMA_combo.set(self.init_list_owner[1][var_Selected])
+            self.wCircle_combo.set(self.init_list_owner[2][var_Selected])
+            self.loggingCo_combo.set(self.init_list_owner[3][var_Selected])
+
+    def initializeLists(self,table):
+
+        query = 'select * from "{}"'.format(table)
+        self.cur1.execute(query)
+        rows = self.cur1.fetchall()
+        rows=sorted(rows)
+        sorted_list = map(list, itertools.izip_longest(*rows))
+        return sorted_list
+
     def create_place_label(self,frme,strng,rownum,columnum,fnt,stcky):
+
         labl_name = Label(frme, text=strng)
         labl_name.grid(row=rownum, column=columnum,sticky=stcky)
         labl_name.config(font=fnt)
-
 
     def create_place_combo(self,frme,Lst,cmboVal,rownum,columnum,fnt,strng,stcky,pdx):
 
@@ -232,7 +328,7 @@ class GUIatFrontDesk:
         name_combo['values'] = Lst
         name_combo.set(Lst[0])
         # self.owner_combo.bind("<<ComboboxSelected>>",lambda event: self.DB_Search_n_Fill(event,"owner",self.Connect_Brisco_DB))
-        name_combo.bind("<<ComboboxSelected>>", lambda event: self.print_test(event,strng,name_combo,Lst))
+        name_combo.bind("<<ComboboxSelected>>", lambda event: self.update_lists(event,strng,name_combo,Lst))
 
     def create_place_dropdown(self, frme, DD_lst, ddVal, rownum, columnum, fnt,stcky,pdx):
 
@@ -247,27 +343,17 @@ class GUIatFrontDesk:
         name_entry.config(font=fnt)
         name_entry.grid(row=rownum, column=columnum,pady=pdy,sticky=stcky,padx=pdx)
 
-    def create_place_button(self, frme ,txt_name, rownum, columnum, fnt,pdy,pdx,dimmh,dimmw,stcky):
+    def create_place_button(self, frme ,txt_name, rownum, columnum, fnt,pdy,pdx,dimmh,dimmw,stcky,cmmd):
 
-        name_button = Button(frme, text=txt_name)
+        name_button = Button(frme, text=txt_name, command = cmmd)
         name_button.config(height=dimmh, width=dimmw, bg='green', activebackground='red',font=fnt)
         name_button.grid(row=rownum, column=columnum, pady=pdy, padx=pdx, sticky = stcky)
-
-    def get_lists(self, db_strng):
-        pass
 
     def print_test(self,event,strng,name_combo,Lst):
         var_Selected = name_combo.current()
         selection_val = str(Lst[var_Selected])
         print(strng)
         print(selection_val)
-        print(var_Selected )
-    def get_vals(self,event,strng,name_combo,Lst):
-        var_Selected = name_combo.current()
-        selection_val = str(Lst[var_Selected])
-        print(strng)
-        print(selection_val)
-
 
 def main():
 
