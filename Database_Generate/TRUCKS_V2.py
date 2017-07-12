@@ -225,8 +225,8 @@ class GUIatFrontDesk:
         dimw = 10
         rown = 1
         colm = 0
-        self.WeighIN = self.create_place_button(framenum, 'Weigh\nIn', rown, colm, ("Courier", 16, "bold"),pddy,pddx,dimh,dimw,W,self.weighIN)
-        self.WeighOUT = self.create_place_button(framenum, 'Weigh\nOut', rown, colm+1, ("Courier", 16, "bold"),pddy,pddx,dimh,dimw,E,self.weighOUT)
+        self.WeighIN = self.create_place_button(framenum, 'Weigh\nIn', rown, colm, ("Courier", 22, "bold"),pddy,pddx,dimh,dimw,W,self.weighIN)
+        self.WeighOUT = self.create_place_button(framenum, 'Weigh\nOut', rown, colm+1, ("Courier", 22, "bold"),pddy,pddx,dimh,dimw,E,self.weighOUT)
         # self.WeighIN.config(state='Disabled')
         self.WeighOUT.config(state='disabled',bg='grey')
 
