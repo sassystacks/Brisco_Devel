@@ -326,7 +326,7 @@ class GUIatFrontDesk:
         trucknum_indx = next(index for (index, d) in enumerate(self.Lst_truckInfo) if d['trucknum'] == self.TrucksInYard.get(self.TrucksInYard.curselection()))
 
         dict_to_fill = self.Lst_truckInfo[trucknum_indx]
-        # self.Lst_truckInfo[:] = [d for d in self.Lst_truckInfo if d.get('id') != 2]
+
         del self.Lst_truckInfo[trucknum_indx]
 
 
@@ -345,10 +345,10 @@ class GUIatFrontDesk:
             ser = serial.Serial('/dev/ttyUSB0',9600)
             str_weight = ser.readline()
             self.tare_weight =  str_weight.split()[1]
-            self.net_weight = int(self.gross_weight)-int(self.tare_weight)
+            self.net_weight = int(dict_to_fill['grossweight'])-int(self.tare_weight)
         except:
             self.tare_weight = 50
-            self.net_weight = self.gross_weight-self.tare_weight
+            self.net_weight = int(dict_to_fill['grossweight'])-self.tare_weight
 
         self.timeOut_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
 
@@ -356,7 +356,7 @@ class GUIatFrontDesk:
 
         #Set labels after weign in
 
-        label_list = [dict_to_fill['daterecieved'],dict_to_fill['timeIn'],self.timeOut_now,str(self.gross_weight),str(self.tare_weight),str(self.net_weight),dict_to_fill['count'] ]
+        label_list = [dict_to_fill['daterecieved'],dict_to_fill['timeIn'],self.timeOut_now,str(dict_to_fill['grossweight']),str(self.tare_weight),str(self.net_weight),dict_to_fill['count'] ]
         rown = 0
         for labl in label_list:
 
@@ -475,7 +475,11 @@ def main():
     root = Tk()
     mainApp = GUIatFrontDesk(root)
     root.attributes('-fullscreen',True)
+<<<<<<< HEAD
     #root.geometry("1200x500")
+=======
+    # root.geometry("1200x500")
+>>>>>>> 1e6d81e10d9c5ac2b147712311f2d82adaa22e47
     root.mainloop()
 
 if __name__ == '__main__':
