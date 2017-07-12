@@ -474,8 +474,8 @@ def main():
 
     root = Tk()
     mainApp = GUIatFrontDesk(root)
-    # root.attributes('-fullscreen',True)
-    root.geometry("1200x500")
+    root.attributes('-fullscreen',True)
+    #root.geometry("1200x500")
     root.mainloop()
 
 if __name__ == '__main__':
