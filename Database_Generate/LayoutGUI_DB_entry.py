@@ -450,7 +450,7 @@ class GUIatFrontDesk:
                     'truckaxle' : int(self.axle_DD_Val.get()),
                     'grossweight' : self.gross_weight,
                     'timeIn'  :     self.timeIn_now,
-
+                    'numpcsreceived' : self.numPieces_entry.get()
                    }
 
         columns = Weighin_dict.keys()
