@@ -20,6 +20,7 @@ class GUIatFrontDesk:
         self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
         self.cur1 = self.Connect_Brisco_DB.crsr()
 
+        # self.loggingco_list =[]
         self.init_list_truck = self.initializeLists('truckers_db')
         self.init_list_owner = self.initializeLists('owner_db')
 
@@ -113,8 +114,7 @@ class GUIatFrontDesk:
             rown = rown + 1
 
         List_frame2 = self.initializeLists('truckers_db')
-        # self.List_frame2 = sorted(initializeLists)
-        List_test = ['test1','test2','test3','test4']
+
         #Menus
         rown = 0
         colm = 1
@@ -152,7 +152,8 @@ class GUIatFrontDesk:
         rown = rown + 1
         self.wCircle_combo = self.create_place_combo(framenum,self.init_list_owner[2],self.wCircle_combo_val,rown,colm,("Courier", 16,"bold"),"owner",W,pddx)
         rown = rown + 1
-
+        self.loggingCo_combo = self.create_place_combo(framenum,self.loggingco_list,self.loggingCo_combo_val,rown,colm,("Courier", 16,"bold"),"owner",W,pddx)
+        rown = rown + 1
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~  Frame 4  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
@@ -315,7 +316,7 @@ class GUIatFrontDesk:
             self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
 
         except:
-            tkMessageBox.showinfo("Make sure all values are filled!")
+            tkMessageBox.showinfo("WHOOPS!","Make sure all values are filled in!")
             # trucknum_indx = next(index for (index, d) in enumerate(self.Lst_truckInfo) if d['trucknum'] == self.TrucksInYard.get(self.TrucksInYard.curselection()))
             del self.Lst_truckInfo[trucknum_indx]
             self.TrucksInYard.delete(trucknum_indx)
@@ -323,6 +324,7 @@ class GUIatFrontDesk:
         self.update_colors_truck()
 
     def weighOUT(self):
+
         trucknum_indx = next(index for (index, d) in enumerate(self.Lst_truckInfo) if d['trucknum'] == self.TrucksInYard.get(self.TrucksInYard.curselection()))
 
         dict_to_fill = self.Lst_truckInfo[trucknum_indx]
@@ -419,6 +421,13 @@ class GUIatFrontDesk:
         rows = self.cur1.fetchall()
         rows=sorted(rows)
         sorted_list = map(list, itertools.izip_longest(*rows))
+        if table == 'owner_db':
+            table1 = 'barkies_db'
+            query = 'select loggingco from "{}"'.format(table1)
+            self.cur1.execute(query)
+            rows = self.cur1.fetchall()
+            t_list  =[str(x[0]) for x in rows]
+            self.loggingco_list =list(set(t_list))
         return sorted_list
 
     def create_place_label(self,frme,strng,rownum,columnum,fnt,stcky):
