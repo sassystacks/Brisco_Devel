@@ -195,16 +195,16 @@ class CindyProgram:
 
     def Create_GovCSV(self):
 
-        B = setup_extract()
+        B = self.setup_extract()
         B.WriteGovCSV()
 
     def Create_barkiesCSV(self):
 
-        B = setup_extract()
+        B = self.setup_extract()
         B.WriteHaulSummaryCSV()
 
     def Create_VbySCSV(self):
-        B = setup_extract()
+        B = self.setup_extract()
         B.WriteVbySCSV()
 
     def setup_extract(self):

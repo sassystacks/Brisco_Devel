@@ -117,22 +117,22 @@ class ExtractCSV:
 
         lstpopnum = []
         lsttm9 = []
-
         for entr in self.lstpopinit:
             popnum = ''.join(['pop. ',entr,' Load slip #'])
             tm9 = ''.join(['pop. ',entr,' TM9 #'])
             lstpopnum.append(popnum)
             lsttm9.append(tm9)
-        list_barkies_hauling = ['Date'] + lstpopnum + ['Sample Loads'] + lsttm9 + listheader
+        list_barkies_hauling = ['Date'] + lstpopnum + ['Sample Loads'] + lsttm9 + listheader1
 
 
         self.ListInit.append(GovCSVList)
         self.ListInit.append(list_barkies_hauling)
 
     def create_dict(self):
-
+        pass
 
     def write_to_Csv(self,lst):
+
         with open(self.fname, "wb") as f:
             writer = csv.writer(f)
             writer.writerow(self.ListInit[1])
