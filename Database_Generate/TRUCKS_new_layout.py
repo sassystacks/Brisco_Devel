@@ -52,6 +52,7 @@ class GUIatFrontDesk:
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~  Frame 1  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
+
         framenum = 1
 
         framenum = self.frame1
@@ -133,10 +134,10 @@ class GUIatFrontDesk:
         self.loggingCo_combo = self.create_place_combo(framenum,List_test,self.loggingCo_combo_val,rown,colm,("Courier", 16,"bold"),"loggingcontractor",W,pddx)
         rown = rown + 1
 
-
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~  Frame 4  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
+
         framenum = self.frame4
         colm = 0
         rown = 0
@@ -158,6 +159,7 @@ class GUIatFrontDesk:
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~  Frame 5  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
+
         framenum = self.frame5
         colm = 0
         rown = 0
@@ -167,16 +169,17 @@ class GUIatFrontDesk:
             self.create_place_label(framenum,strng,rown,colm,("Courier", 16),E)
             self.create_place_label(framenum,'-------',rown,colm+1,("Courier", 16),E)
             rown = rown + 1
+
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~  Frame 6  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
 
         framenum = self.frame6
-        self.label_lstbox = Label(framenum, text = "Trucks to Weigh Out", borderwidth=2, bg = 'bisque',relief='ridge')
+        self.label_lstbox = Label(framenum, text = "Trucks to Weigh Out", borderwidth=2, bg = 'grey',relief='ridge')
         self.label_lstbox.config(font=("Courier", 20,"bold"))
         self.label_lstbox.pack(side=TOP,expand=Y)
         self.TrucksInYard = Listbox(framenum)
-        self.TrucksInYard.config(font=("Courier", 20,"bold"))
+        self.TrucksInYard.config(font=("Courier", 20,"bold"),bg='grey')
         self.TrucksInYard.pack(side=TOP,expand=Y)
 
         for item in ["one", "two", "three", "four"]:
@@ -215,6 +218,7 @@ class GUIatFrontDesk:
     '''
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GUI Methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     '''
+
     def create_place_label(self,frme,strng,rownum,columnum,fnt,stcky):
         labl_name = Label(frme, text=strng)
         labl_name.grid(row=rownum, column=columnum,sticky=stcky)
@@ -262,6 +266,7 @@ class GUIatFrontDesk:
         print(strng)
         print(selection_val)
         print(var_Selected )
+
     def get_vals(self,event,strng,name_combo,Lst):
         var_Selected = name_combo.current()
         selection_val = str(Lst[var_Selected])
