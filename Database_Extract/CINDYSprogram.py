@@ -30,7 +30,7 @@ class CindyProgram:
         self.frame2 = Frame(self.master,borderwidth =2,relief='raised',padx=50,pady=20)
         self.frame2.grid(column=0, row=1)
         self.frame3 = Frame(self.master,borderwidth =5,relief='raised')
-        self.frame3.grid(row=0,column=1,sticky='ns',pady=50)
+        self.frame3.grid(row=0,column=1,sticky='nsew',pady=50)
         self.frame4 = Frame(self.master,borderwidth =5,relief='raised')
         self.frame4.grid(row=1,column=1,sticky='nsew',pady=50)
 
@@ -43,7 +43,8 @@ class CindyProgram:
         self.label_Fname = Label(self.frame2, text="Filename")
 
         # Button widgets
-        self.button_printName = Button(self.frame2, text="Gov CSV",command=self.Create_CSV,bg='green')
+        self.button_printGov = Button(self.frame2, text="Gov CSV",command=self.Create_GovCSV,bg='green')
+        self.button_barkies = Button(self.frame2, text="Full Barkies",command=self.Create_barkiesCSV,bg='green')
         self.Dir_to_Save = Button(self.frame2, text = "Browse", command=self.Browse_dir)
 
         # text entry Widgets
@@ -75,7 +76,8 @@ class CindyProgram:
         self.label_year.grid(row=3,column=1,pady=(20,0))
         self.Year_entry.grid(row=4,column=1)
         self.test_dd.grid(row=4, column= 0)
-        self.button_printName.grid(row=5, column= 3,padx=20)
+        self.button_printGov.grid(row=5, column= 3,padx=20)
+        self.button_barkies.grid(row=6, column = 3)
 
         self.label_CSV = Label(self.frame2,text='Export SpreadSheets',relief='sunken')
         self.label_CSV.grid(row=0,column=1,pady=(0,20))
@@ -186,8 +188,11 @@ class CindyProgram:
         self.returns_label.grid(row=(rownum+2 ), column=2)
         self.poleMat_label.grid(row=(rownum+2 ), column=3)
         self.rejects_label.grid(row=(rownum+2 ) ,column=4)
+    def Create_LoadSumCSV(self):
+        pass
 
-    def Create_CSV(self):
+    def Create_GovCSV(self):
+
         dirPrint =self.Dir_entry.get()
         t_month = self.var1.get()
         month_num =self.DD_L_month.index(t_month)+1
@@ -202,20 +207,42 @@ class CindyProgram:
         self.Fname_entry.insert(0,t_fname)
         full_file = os.path.join(dirPrint,t_fname)
         DB_instance=self.Connect_Brisco_DB
-        A=ExtractCSV(DB_instance,t_fname,month_num,year_num)
-        A.WriteCSV()
+        A=ExtractCSV(DB_instance,full_file,month_num,year_num)
+        A.WriteGovCSV()
+
+    def Create_barkiesCSV(self):
+
+        dirPrint =self.Dir_entry.get()
+        t_month = self.var1.get()
+        month_num =self.DD_L_month.index(t_month)+1
+        year_num = int(self.Year_entry.get())
+        self.Fname_entry.delete(0,'end')
+        s = "_"
+        t_year = self.Year_entry.get()
+        seq = (t_month,t_year,"Barkies","Hauling")
+        t_fname1 = s.join(seq)
+        t_fname2 = ".csv"
+        t_fname = t_fname1 + t_fname2
+        self.Fname_entry.insert(0,t_fname)
+        full_file = os.path.join(dirPrint,t_fname)
+        DB_instance=self.Connect_Brisco_DB
+        A=ExtractCSV(DB_instance,full_file,month_num,year_num)
+        A.WriteHaulSummaryCSV()
 
     def Browse_dir(self):
+
         directory = tkFileDialog.askdirectory()
         self.Dir_entry.delete(0,'end')
         self.Dir_entry.insert(0,directory)
 
     def Create_DropDown(self,DDvar,DDLst,frameName):
+
         DDvar.set(DDLst[0])
         DDmenu = OptionMenu(frameName, DDvar, *DDLst)
         return DDmenu
 
     def EditDB(self):
+
         DB_list = ['blocknum',
                     'daterecieved',
                     'poploadslip',
@@ -260,6 +287,7 @@ class CindyProgram:
 
 
     def EnterScaler(self):
+
         Update_Scaler_keys = ['numpcsreceived' ,
           'logsreject'  ,
           'totalvol'  ,

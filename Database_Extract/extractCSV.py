@@ -9,6 +9,11 @@ class ExtractCSV:
         self.year = year
         self.connect_instance = connect_instance
         self.cur = connect_instance.crsr()
+        self.ListInit = []
+        self.lstpopinit = ['726','720','730','740','750','760','780','785']
+        self.initializeLists()
+
+
     def _replaceSample(self,x):
         if x == '':
             return 'N'
@@ -17,10 +22,8 @@ class ExtractCSV:
         else:
             return x
 
-    def WriteCSV(self):
-        # date1 = dt.date(self.year,self.month,1)
-        # date2 = dt.date(self.year,self.month+1,1)
-        # exec_statement = """SELECT * from {self.sheet_name}"""
+    def WriteGovCSV(self):
+
         self.cur.execute("""SELECT *
                             FROM barkies_db
                             WHERE daterecieved::date >= %s AND daterecieved::date <%s;""",(dt.date(self.year,self.month,1),
@@ -48,6 +51,66 @@ class ExtractCSV:
 
         with open(self.fname, "wb") as f:
             writer = csv.writer(f)
-            writer.writerow(['Mill Number','Population #','Disposition','Working Circle',
-            'Month/Year','Cut Block','Load Number','Gross','Tare','Net','TM9 Number','Sample'])
+            writer.writerow(self.ListInit[0])
             writer.writerows(lst_gov)
+
+
+    def WriteHaulSummaryCSV(self):
+
+
+        self.cur.execute("""SELECT *
+                            FROM barkies_db
+                            WHERE daterecieved::date >= %s AND daterecieved::date <%s;""",(dt.date(self.year,self.month,1),
+                            dt.date(self.year,self.month+1,1)))
+        full_DB_list = self.cur.fetchall()
+        indx = [x for x in range(5,len(full_DB_list[0])-4)]
+        tot_list = []
+        for row in full_DB_list:
+
+            lst_loadslip = [None]*8
+            lst_tm9 = [None]*8
+            lst_intpop = map(int,self.lstpopinit)
+            lst_loadslip[lst_intpop.index(row[1])]=row[1]
+            lst_tm9[lst_intpop.index(row[1])] = row[4].strip('\n')
+            lst_remain = [row[i] for i in indx]
+            print lst_remain
+            lst_remain[-2] = int(lst_remain[-2].strip('\n'))
+            if row[3] == 0:
+                lst_sample = [None]
+            else:
+                lst_sample = ['SAMPLE']
+
+            rown = [row[0]] + lst_loadslip + lst_sample + lst_tm9 + lst_remain
+
+            tot_list.append(rown)
+        print rown
+        with open(self.fname, "wb") as f:
+            writer = csv.writer(f)
+            writer.writerow(self.ListInit[1])
+            writer.writerows(tot_list)
+
+    def initializeLists(self):
+
+
+        GovCSVList = ['Mill Number','Population #','Disposition','Working Circle',
+        'Month/Year','Cut Block','Load Number','Gross','Tare','Net','TM9 Number','Sample']
+
+
+        listheader = ['Owner','Disposition/FMA#','Working Circle',
+        'Block #','Logging Co.','Hauled By','Truck License Plate #',
+        'Truck #','Truck Axle','Gross Weight','Tare Weight','Net Weight','Received # of Pieces']
+
+
+        lstpopnum = []
+        lsttm9 = []
+
+        for entr in self.lstpopinit:
+            popnum = ''.join(['pop. ',entr,' Load slip #'])
+            tm9 = ''.join(['pop. ',entr,' TM9 #'])
+            lstpopnum.append(popnum)
+            lsttm9.append(tm9)
+        list_barkies_hauling = ['Date'] + lstpopnum + ['Sample Loads'] + lsttm9 + listheader
+
+
+        self.ListInit.append(GovCSVList)
+        self.ListInit.append(list_barkies_hauling)
