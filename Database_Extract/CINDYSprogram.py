@@ -45,6 +45,7 @@ class CindyProgram:
         # Button widgets
         self.button_printGov = Button(self.frame2, text="Gov CSV",command=self.Create_GovCSV,bg='green')
         self.button_barkies = Button(self.frame2, text="Full Barkies",command=self.Create_barkiesCSV,bg='green')
+        self.button_VbyS = Button(self.frame2, text="Volume by Supplier",command=self.Create_VbySCSV,bg='green')
         self.Dir_to_Save = Button(self.frame2, text = "Browse", command=self.Browse_dir)
 
         # text entry Widgets
@@ -59,6 +60,7 @@ class CindyProgram:
         # self.DD_month = self.Create_DropDown()
         self.var1 = StringVar()
         self.test_dd = self.Create_DropDown(self.var1,self.DD_L_month,self.frame2)
+
         #initial values in entry boxes
         self.Dir_entry.insert(0,cwd)
         self.Year_entry.insert(0,"2017")
@@ -78,7 +80,7 @@ class CindyProgram:
         self.test_dd.grid(row=4, column= 0)
         self.button_printGov.grid(row=5, column= 3,padx=20)
         self.button_barkies.grid(row=6, column = 3)
-
+        self.button_VbyS.grid(row=6, column = 4)
         self.label_CSV = Label(self.frame2,text='Export SpreadSheets',relief='sunken')
         self.label_CSV.grid(row=0,column=1,pady=(0,20))
 
@@ -193,24 +195,19 @@ class CindyProgram:
 
     def Create_GovCSV(self):
 
-        dirPrint =self.Dir_entry.get()
-        t_month = self.var1.get()
-        month_num =self.DD_L_month.index(t_month)+1
-        year_num = int(self.Year_entry.get())
-        self.Fname_entry.delete(0,'end')
-        s = "_"
-        t_year = self.Year_entry.get()
-        seq = (t_month,t_year,"Load","Summary")
-        t_fname1 = s.join(seq)
-        t_fname2 = ".csv"
-        t_fname = t_fname1 + t_fname2
-        self.Fname_entry.insert(0,t_fname)
-        full_file = os.path.join(dirPrint,t_fname)
-        DB_instance=self.Connect_Brisco_DB
-        A=ExtractCSV(DB_instance,full_file,month_num,year_num)
-        A.WriteGovCSV()
+        B = setup_extract()
+        B.WriteGovCSV()
 
     def Create_barkiesCSV(self):
+
+        B = setup_extract()
+        B.WriteHaulSummaryCSV()
+
+    def Create_VbySCSV(self):
+        B = setup_extract()
+        B.WriteVbySCSV()
+
+    def setup_extract(self):
 
         dirPrint =self.Dir_entry.get()
         t_month = self.var1.get()
@@ -227,7 +224,7 @@ class CindyProgram:
         full_file = os.path.join(dirPrint,t_fname)
         DB_instance=self.Connect_Brisco_DB
         A=ExtractCSV(DB_instance,full_file,month_num,year_num)
-        A.WriteHaulSummaryCSV()
+        return A
 
     def Browse_dir(self):
 
