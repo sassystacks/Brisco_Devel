@@ -14,7 +14,7 @@ class CindyProgram:
 
         self.master = master
 
-        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
+        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
         self.cur1 = self.Connect_Brisco_DB.crsr()
 
         self.img = Image.open("Brisco_logo.png")
@@ -88,7 +88,7 @@ class CindyProgram:
         self.label_frame3= Label(self.frame3,text='Edit Database',relief='sunken')
         self.label_frame3.grid(row=0, column=1,pady=25)
 
-        self.Edit_DD_lst = ['Block #','Date','Population','Load Slip #','Sample Load','TM9 Ticket','Owner',
+        self.Edit_DD_lst = ['Block #','All','Date','Population','Load Slip #','Sample Load','TM9 Ticket','Owner',
             'Disposition/FMA #','Working Circle','Logging Co.','Hauling Contractor','Truck License Plate #',
             'Truck #','Truck Axle','Gross Weight','Tare Weight','Net Weight']
 
@@ -190,24 +190,27 @@ class CindyProgram:
         self.returns_label.grid(row=(rownum+2 ), column=2)
         self.poleMat_label.grid(row=(rownum+2 ), column=3)
         self.rejects_label.grid(row=(rownum+2 ) ,column=4)
+
+        self.master.bind('<Escape>', lambda e: self.master.destroy())
+        
     def Create_LoadSumCSV(self):
         pass
 
     def Create_GovCSV(self):
 
-        B = setup_extract()
+        B = self.setup_extract('Load','Summary')
         B.WriteGovCSV()
 
     def Create_barkiesCSV(self):
 
-        B = setup_extract()
+        B = self.setup_extract('Barkies','Hauling')
         B.WriteHaulSummaryCSV()
 
     def Create_VbySCSV(self):
-        B = setup_extract()
+        B = self.setup_extract('Volume','by','Supplier')
         B.WriteVbySCSV()
 
-    def setup_extract(self):
+    def setup_extract(self,*args):
 
         dirPrint =self.Dir_entry.get()
         t_month = self.var1.get()
@@ -216,7 +219,17 @@ class CindyProgram:
         self.Fname_entry.delete(0,'end')
         s = "_"
         t_year = self.Year_entry.get()
-        seq = (t_month,t_year,"Barkies","Hauling")
+
+        lst = []
+        if args:
+            for arg in args:
+                lst.append(arg)
+            lst_new = [t_month,t_year] + lst
+
+            seq = tuple(lst_new)
+        else:
+            seq = (t_month,t_year)
+
         t_fname1 = s.join(seq)
         t_fname2 = ".csv"
         t_fname = t_fname1 + t_fname2
@@ -241,6 +254,7 @@ class CindyProgram:
     def EditDB(self):
 
         DB_list = ['blocknum',
+                    'All',
                     'daterecieved',
                     'poploadslip',
                     'count',
@@ -269,18 +283,25 @@ class CindyProgram:
         get_val = self.replace_val.get()
         dict_for_Edit = dict(zip(self.Edit_DD_lst,DB_list))
         val_to_chng = dict_for_Edit[self.var_for_edit.get()]
-        is_int = [int(get_val) for x in list_for_int if val_to_chng in x]
 
-        if not is_int:
-            final_replace = get_val
+        TM9_strng = self.enterTM9_forEdit.get()
+
+        if val_to_chng == 'All':
+            sql_statement = 'DELETE FROM barkies2018_db WHERE tm9_ticket = %s;'
+            self.cur1.execute(sql_statement, (TM9_strng,))
 
         else:
-            final_replace = is_int[0]
+            is_int = [int(get_val) for x in list_for_int if val_to_chng in x]
 
-        insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
-        TM9_strng = self.enterTM9_forEdit.get()
-        print self.cur1.mogrify(insert_statement, (AsIs(val_to_chng), (get_val,), TM9_strng))
-        self.cur1.execute(insert_statement, (AsIs(val_to_chng), (get_val,), TM9_strng))
+            if not is_int:
+                final_replace = get_val
+
+            else:
+                final_replace = is_int[0]
+
+            sqlt = 'UPDATE barkies2018_db SET (%s) = %s WHERE tm9_ticket = %s;'
+            print self.cur1.mogrify(sql, (AsIs(val_to_chng), (get_val,), TM9_strng))
+            self.cur1.execute(sql_statement, (AsIs(val_to_chng), (get_val,), TM9_strng))
 
 
     def EnterScaler(self):
@@ -301,7 +322,7 @@ class CindyProgram:
         dictionary = dict(zip(Update_Scaler_keys, Update_Scaler_values))
         columns = dictionary.keys()
         values = [dictionary[column] for column in columns]
-        insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
+        insert_statement = 'UPDATE barkies2018_db SET (%s) = %s WHERE tm9_ticket = %s;'
         strng = self.inputTM9_enter.get()
         self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
 

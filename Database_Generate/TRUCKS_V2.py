@@ -14,11 +14,12 @@ class GUIatFrontDesk:
 
         from PIL import Image, ImageTk
         self.master = master
+
         '''
         ~~~~~~~~~~~~~~~ Connect to Database and initialize Listst ~~~~~~~~~~~~~~
         '''
-        self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.0.200','coffeegood')
-        self.cur1 = self.Connect_Brisco_DB.crsr()
+        # self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
+        # self.cur1 = self.Connect_Brisco_DB.crsr()
 
         # self.loggingco_list =[]
         self.init_list_truck = self.initializeLists('truckers_db')
@@ -115,17 +116,20 @@ class GUIatFrontDesk:
 
         List_frame2 = self.initializeLists('truckers_db')
 
+
         #Menus
         rown = 0
         colm = 1
         pddx = None
-        self.truckNum_combo = self.create_place_combo(framenum,self.init_list_truck[0],self.truckNum_combo_val,rown,colm,("Courier", 20,"bold"),"truck",W,pddx)
+        self.truckNum_combo = self.create_place_combo(framenum,self.init_list_truck[0],self.truckNum_combo_val,rown,colm,("Courier", 20,"bold"),"truck",W,pddx,'normal')
+        self.truckNum_combo.bind("<<ComboboxSelected>>", lambda event: self.update_lists(event,'truck',self.truckNum_combo,self.init_list_truck))
+
         rown = rown + 1
-        self.truckLicense_combo = self.create_place_combo(framenum,self.init_list_truck[1],self.truckLicense_combo_val,rown,colm,("Courier", 16,"bold"),"truck",W,pddx)
+        self.truckLicense_combo = self.create_place_combo(framenum,self.init_list_truck[1],self.truckLicense_combo_val,rown,colm,("Courier", 16,"bold"),"truck",W,pddx,'disabled')
         rown = rown + 1
-        self.hauledBy_combo = self.create_place_combo(framenum,self.init_list_truck[2],self.hauledBy_combo_val,rown,colm,("Courier", 16,"bold"),"truck",W,pddx)
+        self.hauledBy_combo = self.create_place_combo(framenum,self.init_list_truck[2],self.hauledBy_combo_val,rown,colm,("Courier", 16,"bold"),"truck",W,pddx,'disabled')
         rown = rown + 1
-        self.axle_combo = self.create_place_combo(framenum,self.init_list_truck[3],self.axle_combo_val,rown,colm,("Courier", 16,"bold"),"truck",W,pddx)
+        self.axle_combo = self.create_place_combo(framenum,self.init_list_truck[3],self.axle_combo_val,rown,colm,("Courier", 16,"bold"),"truck",W,pddx,'disabled')
 
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~  Frame 3  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -146,13 +150,16 @@ class GUIatFrontDesk:
         rown = 0
         colm = 1
         pddx = None
-        self.owner_combo = self.create_place_combo(framenum,self.init_list_owner[0],self.owner_combo_val,rown,colm,("Courier", 20,"bold"),"owner",W,pddx)
+        self.init_list_owner_set =list(set(self.init_list_owner[0]))
+        self.owner_combo = self.create_place_combo(framenum,self.init_list_owner_set,self.owner_combo_val,rown,colm,("Courier", 20,"bold"),"owner",W,pddx,'normal')
+        self.owner_combo.bind("<<ComboboxSelected>>", lambda event: self.update_lists(event,'owner',self.owner_combo,self.init_list_owner_set))
+
         rown = rown + 1
-        self.FMA_combo = self.create_place_combo(framenum,self.init_list_owner[1],self.FMA_combo_val,rown,colm,("Courier", 16,"bold"),"owner",W,pddx)
+        self.FMA_combo = self.create_place_combo(framenum,self.init_list_owner[1],self.FMA_combo_val,rown,colm,("Courier", 16,"bold"),"owner",W,pddx,'disabled')
         rown = rown + 1
-        self.wCircle_combo = self.create_place_combo(framenum,self.init_list_owner[2],self.wCircle_combo_val,rown,colm,("Courier", 16,"bold"),"owner",W,pddx)
+        self.wCircle_combo = self.create_place_combo(framenum,self.init_list_owner[2],self.wCircle_combo_val,rown,colm,("Courier", 16,"bold"),"owner",W,pddx,'disabled')
         rown = rown + 1
-        self.loggingCo_combo = self.create_place_combo(framenum,self.loggingco_list,self.loggingCo_combo_val,rown,colm,("Courier", 16,"bold"),"owner",W,pddx)
+        self.loggingCo_combo = self.create_place_combo(framenum,self.loggingco_list,self.loggingCo_combo_val,rown,colm,("Courier", 16,"bold"),"owner",W,pddx,'disabled')
         rown = rown + 1
         '''
         ~~~~~~~~~~~~~~~~~~~~~~~  Frame 4  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -235,29 +242,46 @@ class GUIatFrontDesk:
         ~~~~~~~~~~~~~~~  close program with escape key  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
         self.master.bind('<Escape>', lambda e: self.master.destroy())
+        self.frame1.bind('<Button-1>', self.enable_button)
+        self.frame2.bind('<Button-1>', self.enable_button)
+        self.frame3.bind('<Button-1>', self.enable_button)
+        self.frame4.bind('<Button-1>', self.enable_button)
 
     '''
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GUI Methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     '''
+
+    def enable_button(self,event):
+
+        if event == "<<ListboxSelect>>":
+            self.WeighIN.config(state='disabled',bg='grey')
+            self.WeighOUT.config(state='normal',bg='green')
+        else:
+            self.WeighIN.config(state='normal',bg='green')
+            self.WeighOUT.config(state='disabled',bg='grey')
+
     def enable_weighOut(self,event):
         self.WeighIN.config(state='disabled',bg='grey')
         self.WeighOUT.config(state='normal',bg='green')
 
     def weighIN(self):
+        Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
+        cur1 = Connect_Brisco_DB.crsr()
 
         try:
             ser = serial.Serial('/dev/ttyUSB0',9600)
             str_weight = ser.readline()
             self.gross_weight =  str_weight.split()[1]
             self.gross_weight =int(self.gross_weight)
+            ser.close()
         except:
             self.gross_weight =  100
 
         self.date_now = str(datetime.datetime.now().date())
         self.timeIn_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
 
-        self.cur1.execute(sql.SQL("SELECT poploadslip,count FROM testscale WHERE {} = %s;").format(sql.Identifier('poploadslip')), (self.popDD_val.get(),))
-        a = self.cur1.fetchall()
+        cur1.execute(sql.SQL("SELECT poploadslip,count FROM testscale WHERE {} = %s;").format(sql.Identifier('poploadslip')), (self.popDD_val.get(),))
+        a = cur1.fetchall()
 
         try:
             self.new_popCount = int(a[-1][1])+1
@@ -301,30 +325,53 @@ class GUIatFrontDesk:
                     'grossweight' : self.gross_weight,
                     'timeIn'  :     self.timeIn_now,
                     'numpcsreceived' : self.numPieces_entry.get()
-
                    }
 
         self.Lst_truckInfo.append(Weighin_dict)
         trucknum_indx = len(self.Lst_truckInfo)-1
 
         columns = Weighin_dict.keys()
-        values = [Weighin_dict[column] for column in columns]
+        # values = [Weighin_dict[column] for column in columns]
+        values = [None if Weighin_dict[key] == '' else Weighin_dict[key] for key in columns]
 
         insert_statement = 'INSERT INTO testscale (%s) VALUES %s'
 
-        try:
-            self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
+        #check if previous TM9 same was entered
+        check_statement = 'SELECT tm9_ticket FROM testscale'
 
-        except:
-            tkMessageBox.showinfo("WHOOPS!","Make sure all values are filled in!")
-            # trucknum_indx = next(index for (index, d) in enumerate(self.Lst_truckInfo) if d['trucknum'] == self.TrucksInYard.get(self.TrucksInYard.curselection()))
+        cur1.execute('SELECT tm9_ticket FROM testscale')
+        check_tm9 = cur1.fetchall()
+
+
+        if [item for item in check_tm9 if Weighin_dict['tm9_ticket'] in item]:
+            tkMessageBox.showinfo("WHOOPS!","That TM9 already Exists!")
             del self.Lst_truckInfo[trucknum_indx]
             self.TrucksInYard.delete(trucknum_indx)
+        else:
+
+            try:
+                cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
+                self.change_state(self.truckLicense_combo)
+                self.change_state(self.hauledBy_combo)
+                self.change_state(self.axle_combo)
+                self.change_state(self.FMA_combo)
+                self.change_state(self.wCircle_combo)
+
+            except:
+                tkMessageBox.showinfo("WHOOPS!","Make sure all values are filled in!")
+                # trucknum_indx = next(index for (index, d) in enumerate(self.Lst_truckInfo) if d['trucknum'] == self.TrucksInYard.get(self.TrucksInYard.curselection()))
+                del self.Lst_truckInfo[trucknum_indx]
+                self.TrucksInYard.delete(trucknum_indx)
+
+
 
         self.update_colors_truck()
+        cur1.close()
 
     def weighOUT(self):
 
+        Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
+        cur1 = Connect_Brisco_DB.crsr()
         trucknum_indx = next(index for (index, d) in enumerate(self.Lst_truckInfo) if d['trucknum'] == self.TrucksInYard.get(self.TrucksInYard.curselection()))
 
         dict_to_fill = self.Lst_truckInfo[trucknum_indx]
@@ -348,6 +395,8 @@ class GUIatFrontDesk:
             str_weight = ser.readline()
             self.tare_weight =  str_weight.split()[1]
             self.net_weight = int(dict_to_fill['grossweight'])-int(self.tare_weight)
+            ser.close()
+
         except:
             self.tare_weight = 50
             self.net_weight = int(dict_to_fill['grossweight'])-self.tare_weight
@@ -382,11 +431,12 @@ class GUIatFrontDesk:
         insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
         strng = self.TM9_entry.get()
 
-        self.cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
+        cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
 
         self.WeighOUT.config(state='disabled',bg='grey')
         self.WeighIN.config(state='normal',bg='green')
         self.update_colors_truck()
+        cur1.close()
 
     def update_colors_truck(self):
         if self.Lst_truckInfo:
@@ -397,37 +447,103 @@ class GUIatFrontDesk:
             self.TrucksInYard.config(bg=self.orig_colour)
             self.label_lstbox.config(bg=self.orig_colour)
 
+    def select_db(self,table,column,value,entry):
+
+        Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
+        cur1 = Connect_Brisco_DB.crsr()
+
+        sql = 'SELECT %s FROM %s WHERE %s' % (entry,table,column) + ' = %s'
+        cur1.execute(sql, (value, ))
+
+        row = cur1.fetchall()
+        cur1.close()
+        return row
+
     def update_lists(self,event,strng,name_combo,Lst):
 
         var_Selected = name_combo.current()
 
         if strng == 'owner':
-            self.owner_combo.set(self.init_list_owner[0][var_Selected])
-            self.FMA_combo.set(self.init_list_owner[1][var_Selected])
-            self.wCircle_combo.set(self.init_list_owner[2][var_Selected])
-            # self.loggingCo_combo.set(self.init_list_owner[3][var_Selected])
+            valToQuery = self.init_list_owner_set[var_Selected]
+
+            self.owner_combo.set(valToQuery)
+
+            #enable the other comboboxes
+            self.change_state(self.FMA_combo,1)
+            self.change_state(self.wCircle_combo,1)
+            self.change_state(self.loggingCo_combo,1)
+
+            vals = self.select_db('owner_db','owner',valToQuery,'*')
+
+            lst_FMA = [val[1] if not [None] else '' for val in vals ]
+            lst_wCirc = [val[2] if not [None] else '' for val in vals ]
+            lst_FMA = list(set(lst_FMA))
+            lst_wCirc =list(set(lst_wCirc))
+
+            self.FMA_combo['values'] = lst_FMA
+            self.wCircle_combo['values'] = lst_wCirc
+
+            self.FMA_combo.set(lst_FMA[0])
+            self.wCircle_combo.set(lst_wCirc[0])
 
         elif strng == 'truck':
-            self.truckNum_combo.set(self.init_list_truck[0][var_Selected])
-            self.truckLicense_combo.set(self.init_list_truck[1][var_Selected])
-            self.hauledBy_combo.set(self.init_list_truck[2][var_Selected])
-            self.axle_combo.set(self.init_list_truck[3][var_Selected])
-            # self.loggingCo_combo.set(self.init_list_owner[3][var_Selected])
+            valToQuery = self.init_list_truck[0][var_Selected]
+            self.truckNum_combo.set(valToQuery)
+
+            #enable the other comboboxes
+            self.change_state(self.truckLicense_combo,1)
+            self.change_state(self.hauledBy_combo,1)
+            self.change_state(self.axle_combo,1)
+
+            vals = self.select_db('truckers_db','trucknum',valToQuery,'*')
+
+            lst_license = [val[1]  for val in vals ]
+            lst_haulingco = [val[2]  for val in vals ]
+            lst_axle = [val[3]  for val in vals ]
+
+            lst_license = list(set(lst_license))
+            lst_haulingco =list(set(lst_haulingco))
+            lst_axle =list(set(lst_axle))
+
+            self.truckLicense_combo['values'] = lst_license
+            self.hauledBy_combo['values'] = lst_haulingco
+            self.axle_combo['values'] = lst_axle
+
+            self.truckLicense_combo.set(lst_license[0])
+            self.hauledBy_combo.set(lst_haulingco[0])
+            self.axle_combo.set(lst_axle[0])
+
+    def change_state(self,cmbobx,*args):
+
+        a = str(cmbobx['state'])
+
+        if args:
+            a = 'disabled'
+
+        if a == 'disabled':
+            ste = 'normal'
+        else:
+            ste = 'disabled'
+
+        cmbobx.config(state=ste)
 
     def initializeLists(self,table):
+        Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
+        cur1 = Connect_Brisco_DB.crsr()
 
-        query = 'select * from "{}"'.format(table)
-        self.cur1.execute(query)
-        rows = self.cur1.fetchall()
+        query = 'SELECT * from "{}"'.format(table)
+        cur1.execute(query)
+        rows = cur1.fetchall()
         rows=sorted(rows)
         sorted_list = map(list, itertools.izip_longest(*rows))
         if table == 'owner_db':
-            table1 = 'barkies_db'
+            table1 = 'testscale'
             query = 'select loggingco from "{}"'.format(table1)
-            self.cur1.execute(query)
-            rows = self.cur1.fetchall()
+            cur1.execute(query)
+            rows = cur1.fetchall()
             t_list  =[str(x[0]) for x in rows]
             self.loggingco_list =list(set(t_list))
+        cur1.close()
         return sorted_list
 
     def create_place_label(self,frme,strng,rownum,columnum,fnt,stcky):
@@ -437,18 +553,17 @@ class GUIatFrontDesk:
         labl_name.config(font=fnt, text=strng)
         return labl_name
 
-    def create_place_combo(self,frme,Lst,cmboVal,rownum,columnum,fnt,strng,stcky,pdx):
+    def create_place_combo(self,frme,Lst,cmboVal,rownum,columnum,fnt,strng,stcky,pdx,ste):
 
         bigfont = tkFont.Font(root=frme,family="Courier",size=30, weight='bold')
         frme.option_add("*TCombobox*Listbox*Font", bigfont)
 
         name_combo = ttk.Combobox(frme,textvariable = cmboVal)
         name_combo.grid(row=rownum, column=columnum,sticky=stcky,padx=pdx)
-        name_combo.config(font=fnt)
+        name_combo.config(font=fnt,state=ste)
         name_combo['values'] = Lst
         name_combo.set(Lst[1])
         # self.owner_combo.bind("<<ComboboxSelected>>",lambda event: self.DB_Search_n_Fill(event,"owner",self.Connect_Brisco_DB))
-        name_combo.bind("<<ComboboxSelected>>", lambda event: self.update_lists(event,strng,name_combo,Lst))
         return name_combo
 
     def create_place_dropdown(self, frme, DD_lst, ddVal, rownum, columnum, fnt,stcky,pdx):
@@ -479,12 +594,13 @@ class GUIatFrontDesk:
         print(strng)
         print(selection_val)
 
+
 def main():
 
     root = Tk()
     mainApp = GUIatFrontDesk(root)
-    root.attributes('-fullscreen',True)
-    # root.geometry("1200x500")
+    # root.attributes('-fullscreen',True)
+    root.geometry("1200x500")
     root.mainloop()
 
 if __name__ == '__main__':

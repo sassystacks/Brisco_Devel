@@ -15,7 +15,7 @@ class ExtractCSV:
         self.initializeLists()
 
         self.cur.execute("""SELECT *
-                            FROM barkies_db
+                            FROM testscale
                             WHERE daterecieved::date >= %s AND daterecieved::date <%s;""",(dt.date(self.year,self.month,1),
                             dt.date(self.year,self.month+1,1)))
         self.full_DB_list = self.cur.fetchall()
@@ -49,7 +49,7 @@ class ExtractCSV:
             b[-1] = sample
             lst_gov.append(b)
 
-            self.write_to_Csv(lst_gov)
+            self.write_to_Csv(lst_gov,0)
 
     def WriteHaulSummaryCSV(self):
 
@@ -64,7 +64,8 @@ class ExtractCSV:
             lst_tm9[lst_intpop.index(row[1])] = row[4].strip('\n')
             lst_remain = [row[i] for i in indx]
             print lst_remain
-            lst_remain[-2] = int(lst_remain[-2].strip('\n'))
+            lst_remain[-2] = lst_remain[-2].strip('\n')
+            lst_remain[-2] =int(lst_remain[-2])
             if row[3] == 0:
                 lst_sample = [None]
             else:
@@ -75,10 +76,10 @@ class ExtractCSV:
             tot_list.append(rown)
         print rown
 
-        self.write_to_Csv(tot_list)
+        self.write_to_Csv(tot_list,1)
 
     def WriteVbySCSV(self):
-        indx = []
+
         DB_list = ['daterecieved',
                     'poploadslip',
                     'count',
@@ -95,12 +96,40 @@ class ExtractCSV:
                     'truckaxle' ,
                     'grossweight',
                     'tareweight',
-                    'netweight' ]
+                    'netweight',
+                    ]
+        indx = [x for x in range (0,len(DB_list))]
 
         rows=sorted(self.full_DB_list)
         sorted_list = map(list, itertools.izip_longest(*rows))
-        sorted_list = [sorted_list[i] for i in indx]
+        sorted_list = sorted_list[:len(DB_list)]
         dict_for_write = dict(zip(self.Edit_DD_lst,DB_list))
+        tot_list=[None]*69
+        for x in [1,41,48]:
+            tot_list[x] = dict_for_write['tm9_ticket']
+        for x in [12,15,18]:
+            tot_list[x] = dict_for_write['owner']
+        tot_list[2] = dict_for_write['disposition_fmanum']
+        tot_list[3] = dict_for_write['blocknum']
+        tot_list[13] = dict_for_write['loggingco']
+        tot_list[14] = dict_for_write['trucknum']
+
+        self.write_to_Csv(tot_list)
+        # tot_list = [dict_for_write['tm9_ticket'] for ]
+        # tot_list = [dict_for_write['daterecieved'],dict_for_write['tm9_ticket'],
+        #             dict_for_write['disposition_fmanum'],dict_for_write['blocknum'],
+        #             None,None,None,None,None,None,None,None,dict_for_write['owner']13,
+        #             dict_for_write['loggingco'],dict_for_write['haulingcontractor'],
+        #             dict_for_write['owner']16,None,None,,dict_for_write['owner']19,
+        #             None,None,dict_for_write['loggingco']22,None,None,
+        #             dict_for_write['haulingcontractor']25,None,None,None,None,None,
+        #             None,None,None,None,None,None,None,None,None,None,None,
+        #             dict_for_write['tm9_ticket']42,None,None,None,None,
+        #             dict_for_write['owner'],dict_for_write[''],dict_for_write[''],
+        #             dict_for_write[''],dict_for_write[''],dict_for_write[''],
+        #             dict_for_write[''],dict_for_write[''],dict_for_write[''],
+        #             dict_for_write[''],dict_for_write[''],dict_for_write[''],
+        #             dict_for_write[''],]
 
     def initializeLists(self):
 
@@ -123,17 +152,18 @@ class ExtractCSV:
             tm9 = ''.join(['pop. ',entr,' TM9 #'])
             lstpopnum.append(popnum)
             lsttm9.append(tm9)
-        list_barkies_hauling = ['Date'] + lstpopnum + ['Sample Loads'] + lsttm9 + listheader
+        list_barkies_hauling = ['Date'] + lstpopnum + ['Sample Loads'] + lsttm9 + listheader1
 
 
         self.ListInit.append(GovCSVList)
         self.ListInit.append(list_barkies_hauling)
 
     def create_dict(self):
+        pass
 
-
-    def write_to_Csv(self,lst):
+    def write_to_Csv(self,lst,*args):
         with open(self.fname, "wb") as f:
             writer = csv.writer(f)
-            writer.writerow(self.ListInit[1])
+            if args:
+                writer.writerow(self.ListInit[args])
             writer.writerows(lst)

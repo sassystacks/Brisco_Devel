@@ -1,13 +1,12 @@
 
-a = [1,4,1,'4',1,4,1,4,4,335]
+lst_tup = [(1,2,4),(6,7,8),(12,1,5),(3,7,8)]
 
-b = [x+1 for x in a]
-c = [x-2 for x in b]
+# for x in lst_tup:
+#     print x
+i = [0,1,2]
 
 
-d = [a,b,c]
-print(d)
-d = sorted(d)
-print(d)
-d = map(list, zip(*d))
-print(d)
+
+
+if [item for item in lst_tup if 1 in item]:
+    print(i)
