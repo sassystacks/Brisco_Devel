@@ -146,7 +146,6 @@ class ExtractCSV:
 
         lstpopnum = []
         lsttm9 = []
-
         for entr in self.lstpopinit:
             popnum = ''.join(['pop. ',entr,' Load slip #'])
             tm9 = ''.join(['pop. ',entr,' TM9 #'])
@@ -161,7 +160,12 @@ class ExtractCSV:
     def create_dict(self):
         pass
 
+<<<<<<< HEAD
     def write_to_Csv(self,lst,*args):
+=======
+    def write_to_Csv(self,lst):
+
+>>>>>>> ce4a81d57d2225f0305646297ab3fc8fcd65491e
         with open(self.fname, "wb") as f:
             writer = csv.writer(f)
             if args:

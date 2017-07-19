@@ -198,16 +198,28 @@ class CindyProgram:
 
     def Create_GovCSV(self):
 
+<<<<<<< HEAD
         B = self.setup_extract('Load','Summary')
+=======
+        B = self.setup_extract()
+>>>>>>> ce4a81d57d2225f0305646297ab3fc8fcd65491e
         B.WriteGovCSV()
 
     def Create_barkiesCSV(self):
 
+<<<<<<< HEAD
         B = self.setup_extract('Barkies','Hauling')
         B.WriteHaulSummaryCSV()
 
     def Create_VbySCSV(self):
         B = self.setup_extract('Volume','by','Supplier')
+=======
+        B = self.setup_extract()
+        B.WriteHaulSummaryCSV()
+
+    def Create_VbySCSV(self):
+        B = self.setup_extract()
+>>>>>>> ce4a81d57d2225f0305646297ab3fc8fcd65491e
         B.WriteVbySCSV()
 
     def setup_extract(self,*args):
