@@ -1,4 +1,4 @@
-from Tkinter import *
+cfrom Tkinter import *
 import ttk, tkFont, tkMessageBox
 import itertools
 import datetime
@@ -15,13 +15,9 @@ class GUIatFrontDesk:
         from PIL import Image, ImageTk
         self.master = master
 
-        '''
-        ~~~~~~~~~~~~~~~ Connect to Database and initialize Listst ~~~~~~~~~~~~~~
-        '''
-        # self.Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
-        # self.cur1 = self.Connect_Brisco_DB.crsr()
+        self.ip_add = '192.168.1.214'
+        self.psswd  = 'crunchyAAA32'
 
-        # self.loggingco_list =[]
         self.init_list_truck = self.initializeLists('truckers_db')
         self.init_list_owner = self.initializeLists('owner_db')
 
@@ -193,7 +189,7 @@ class GUIatFrontDesk:
         self.dict_labels = {}
         for strng in f6_lst_labels:
             self.create_place_label(framenum,strng,rown,colm,("Courier", 16),E)
-            self.create_place_label(framenum,'-------',rown,colm+1,("Courier", 16),'ew')
+            self.create_place_label(framenum,'',rown,colm+1,("Courier", 16),'ew')
             rown = rown + 1
 
 
@@ -265,7 +261,7 @@ class GUIatFrontDesk:
         self.WeighOUT.config(state='normal',bg='green')
 
     def weighIN(self):
-        Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
+        Connect_Brisco_DB = Connect_DB('postgres','postgres',self.ip_add,self.psswd)
         cur1 = Connect_Brisco_DB.crsr()
 
         try:
@@ -342,9 +338,15 @@ class GUIatFrontDesk:
         cur1.execute('SELECT tm9_ticket FROM testscale')
         check_tm9 = cur1.fetchall()
 
+        keys = ['tm9_ticket','blocknum','numpcsreceived']
 
         if [item for item in check_tm9 if Weighin_dict['tm9_ticket'] in item]:
             tkMessageBox.showinfo("WHOOPS!","That TM9 already Exists!")
+            del self.Lst_truckInfo[trucknum_indx]
+            self.TrucksInYard.delete(trucknum_indx)
+
+        elif not any(Weighin_dict[key] for key in keys):
+            tkMessageBox.showinfo("WHOOPS!","I think you forgot to enter something!")
             del self.Lst_truckInfo[trucknum_indx]
             self.TrucksInYard.delete(trucknum_indx)
         else:
@@ -370,7 +372,7 @@ class GUIatFrontDesk:
 
     def weighOUT(self):
 
-        Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
+        Connect_Brisco_DB = Connect_DB('postgres','postgres',self.ip_add,self.psswd)
         cur1 = Connect_Brisco_DB.crsr()
         trucknum_indx = next(index for (index, d) in enumerate(self.Lst_truckInfo) if d['trucknum'] == self.TrucksInYard.get(self.TrucksInYard.curselection()))
 
@@ -449,7 +451,7 @@ class GUIatFrontDesk:
 
     def select_db(self,table,column,value,entry):
 
-        Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
+        Connect_Brisco_DB = Connect_DB('postgres','postgres',self.ip_add,self.psswd)
         cur1 = Connect_Brisco_DB.crsr()
 
         sql = 'SELECT %s FROM %s WHERE %s' % (entry,table,column) + ' = %s'
@@ -475,16 +477,16 @@ class GUIatFrontDesk:
 
             vals = self.select_db('owner_db','owner',valToQuery,'*')
 
-            lst_FMA = [val[1] if not [None] else '' for val in vals ]
-            lst_wCirc = [val[2] if not [None] else '' for val in vals ]
+            lst_FMA = [val[1] if val[1] is not [None] else '' for val in vals ]
+            lst_wCirc = [val[2] if val[2] is not [None] else '' for val in vals ]
             lst_FMA = list(set(lst_FMA))
             lst_wCirc =list(set(lst_wCirc))
 
             self.FMA_combo['values'] = lst_FMA
             self.wCircle_combo['values'] = lst_wCirc
 
-            self.FMA_combo.set(lst_FMA[0])
-            self.wCircle_combo.set(lst_wCirc[0])
+            self.chk_exist(lst_FMA,self.FMA_combo)
+            self.chk_exist(lst_wCirc,self.wCircle_combo)
 
         elif strng == 'truck':
             valToQuery = self.init_list_truck[0][var_Selected]
@@ -513,6 +515,13 @@ class GUIatFrontDesk:
             self.hauledBy_combo.set(lst_haulingco[0])
             self.axle_combo.set(lst_axle[0])
 
+    def chk_exist(self,lst,combobx):
+        #if no value in list makes entry blank
+        if lst[0]:
+            combobx.set(lst[0])
+        else:
+            combobx.set('')
+
     def change_state(self,cmbobx,*args):
 
         a = str(cmbobx['state'])
@@ -528,7 +537,7 @@ class GUIatFrontDesk:
         cmbobx.config(state=ste)
 
     def initializeLists(self,table):
-        Connect_Brisco_DB = Connect_DB('postgres','postgres','192.168.1.214','crunchyAAA32')
+        Connect_Brisco_DB = Connect_DB('postgres','postgres',self.ip_add,self.psswd)
         cur1 = Connect_Brisco_DB.crsr()
 
         query = 'SELECT * from "{}"'.format(table)
