@@ -2,7 +2,8 @@ Edit_DD_lst = ['Date','Population','Load Slip #','Sample Load','TM9 Ticket','Own
     'Hauling Contractor','Working Circle','Block #','Logging Co.','Truck License Plate #',
     'Truck #','Truck Axle','Gross Weight','Tare Weight','Net Weight','Disposition/FMA #']
 
-DB_list = ['daterecieved', 'poploadslip',
+DB_list = ['daterecieved',
+                    'poploadslip',
                     'count',
                     'sampleloads' ,
                     'tm9_ticket',
