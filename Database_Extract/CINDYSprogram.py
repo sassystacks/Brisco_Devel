@@ -13,7 +13,7 @@ class CindyProgram:
     def __init__(self,master):
 
         cwd = os.getcwd()
-        self.userDir = 'CindyHallett'
+        self.userDir = 'Cindy'
 
         self.master = master
 
