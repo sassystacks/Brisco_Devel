@@ -380,7 +380,7 @@ class CindyProgram:
         else:
             final_replace = is_int[0]
 
-        sql_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
+        sql_statement = 'UPDATE barkies2018_db SET (%s) = %s WHERE tm9_ticket = %s;'
 
         cur.execute(sql_statement, (AsIs(val_to_chng), (get_val,), TM9_strng))
 
