@@ -1,4 +1,4 @@
-cfrom Tkinter import *
+from Tkinter import *
 import ttk, tkFont, tkMessageBox
 import itertools
 import datetime
@@ -15,8 +15,8 @@ class GUIatFrontDesk:
         from PIL import Image, ImageTk
         self.master = master
 
-        self.ip_add = '192.168.1.214'
-        self.psswd  = 'crunchyAAA32'
+        self.ip_add = '192.168.0.200'
+        self.psswd  = 'coffeegood'
 
         self.init_list_truck = self.initializeLists('truckers_db')
         self.init_list_owner = self.initializeLists('owner_db')
@@ -608,8 +608,8 @@ def main():
 
     root = Tk()
     mainApp = GUIatFrontDesk(root)
-    # root.attributes('-fullscreen',True)
-    root.geometry("1200x500")
+    root.attributes('-fullscreen',True)
+    # root.geometry("1200x500")
     root.mainloop()
 
 if __name__ == '__main__':
