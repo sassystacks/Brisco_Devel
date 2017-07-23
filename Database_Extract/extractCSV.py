@@ -13,7 +13,7 @@ class ExtractCSV:
         self.lstpopinit = ['726','720','730','740','750','760','780','785']
         self.initializeLists()
 
-        self.full_table = 'testscale'
+        self.full_table = 'barkies2018_db'
 
         self.DB_list = ['daterecieved',
                     'poploadslip',
