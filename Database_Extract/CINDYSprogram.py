@@ -25,7 +25,7 @@ class CindyProgram:
         paddyTitle = (0,10)
         self.ip_add = '192.168.0.200'
         self.psswd = 'coffeegood'
-        self.table = 'testscale'
+        self.table = 'barkies2018_db'
         self.TopDir = 'Cindys Awesome Folder'
         self.Connect_Brisco_DB = Connect_DB('postgres','postgres',self.ip_add,self.psswd)
 
