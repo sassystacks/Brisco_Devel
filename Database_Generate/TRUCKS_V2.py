@@ -223,14 +223,14 @@ class GUIatFrontDesk:
         self.label_image.config(height = 250, width =250)
         self.label_image.grid(row = 0, column = 0, columnspan=2)
 
-        pddx = 20
-        pddy = (150,0)
-        dimh = 8
+        pddx =35
+        pddy = (50,0)
+        dimh = 4
         dimw = 10
         rown = 1
         colm = 0
-        self.WeighIN = self.create_place_button(framenum, 'Weigh\nIn', rown, colm, ("Courier", 22, "bold"),pddy,pddx,dimh,dimw,W,self.weighIN)
-        self.WeighOUT = self.create_place_button(framenum, 'Weigh\nOut', rown, colm+1, ("Courier", 22, "bold"),pddy,pddx,dimh,dimw,E,self.weighOUT)
+        self.WeighIN = self.create_place_button(framenum, 'Weigh\nIn',1, 0, ("Courier", 22, "bold"),pddy,pddx,dimh,dimw,W,self.weighIN)
+        self.WeighOUT = self.create_place_button(framenum, 'Weigh\nOut', 2, 0, ("Courier", 22, "bold"),pddy,pddx,dimh,dimw,E,self.weighOUT)
         # self.WeighIN.config(state='Disabled')
         self.WeighOUT.config(state='disabled',bg='grey')
 
