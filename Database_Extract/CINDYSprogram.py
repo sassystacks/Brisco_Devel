@@ -13,7 +13,7 @@ class CindyProgram:
     def __init__(self,master):
 
         cwd = os.getcwd()
-        self.userDir = 'r.beddoes'
+        self.userDir = 'CindyHallett'
 
         self.master = master
 
@@ -23,8 +23,8 @@ class CindyProgram:
         buttoncol = 'light slate gray'
         TitleFont = ("Courier", 20,"bold")
         paddyTitle = (0,10)
-        self.ip_add = '192.168.1.214'
-        self.psswd = 'crunchyAAA32'
+        self.ip_add = '192.168.0.200'
+        self.psswd = 'coffeegood'
         self.table = 'testscale'
         self.TopDir = 'Cindys Awesome Folder'
         self.Connect_Brisco_DB = Connect_DB('postgres','postgres',self.ip_add,self.psswd)
