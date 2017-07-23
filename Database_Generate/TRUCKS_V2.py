@@ -15,8 +15,8 @@ class GUIatFrontDesk:
         from PIL import Image, ImageTk
         self.master = master
 
-        self.ip_add = '192.168.0.200'
-        self.psswd  = 'coffeegood'
+        self.ip_add = '192.168.1.214'
+        self.psswd  = 'crunchyAAA32'
 
         self.init_list_truck = self.initializeLists('truckers_db')
         self.init_list_owner = self.initializeLists('owner_db')
