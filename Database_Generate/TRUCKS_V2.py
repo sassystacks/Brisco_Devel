@@ -15,8 +15,8 @@ class GUIatFrontDesk:
         from PIL import Image, ImageTk
         self.master = master
 
-        self.ip_add = '192.168.1.214'
-        self.psswd  = 'crunchyAAA32'
+        self.ip_add = 'localhost'
+        self.psswd  = 'coffeegood'
 
         self.init_list_truck = self.initializeLists('truckers_db')
         self.init_list_owner = self.initializeLists('owner_db')
@@ -87,6 +87,7 @@ class GUIatFrontDesk:
         self.blockNum_entry_var = StringVar()
 
         self.TM9_entry = self.create_place_entry(framenum,self.TM9_entry_var, rown, colm, ("Courier", 16,"bold"),20,E,pddx)
+        self.TM9_entry.bind('<Key>',self.activate_weighIN)
         rown = rown + 1
         self.blockNum_entry = self.create_place_entry(framenum,self.blockNum_entry_var, rown, colm, ("Courier", 16,"bold"),40,E,pddx)
         rown = rown + 1
@@ -224,37 +225,48 @@ class GUIatFrontDesk:
         self.label_image.grid(row = 0, column = 0, columnspan=2)
 
         pddx =35
-        pddy = (50,0)
-        dimh = 4
+        pddy = (15,0)
+        dimh = 1
         dimw = 10
         rown = 1
         colm = 0
-        self.WeighIN = self.create_place_button(framenum, 'Weigh\nIn',1, 0, ("Courier", 22, "bold"),pddy,pddx,dimh,dimw,W,self.weighIN)
-        self.WeighOUT = self.create_place_button(framenum, 'Weigh\nOut', 2, 0, ("Courier", 22, "bold"),pddy,pddx,dimh,dimw,E,self.weighOUT)
+        self.WeighIN = self.create_place_button(framenum, 'Weigh In',1, 0, ("Courier", 22, "bold"),(100,0),pddx,dimh,dimw,E,self.weighIN)
+        self.WeighOUT = self.create_place_button(framenum, 'Weigh Out', 2, 0, ("Courier", 22, "bold"),pddy,pddx,dimh,dimw,E,self.weighOUT)
+        self.clearEntry = self.create_place_button(framenum, 'Clear', 3, 0, ("Courier", 22, "bold"),pddy,pddx,dimh,dimw,E,self.clearEntry)
         # self.WeighIN.config(state='Disabled')
         self.WeighOUT.config(state='disabled',bg='grey')
+        self.WeighIN.config(state='disabled',bg='grey')
+        self.clearEntry.config(bg='ivory4')
 
         '''
         ~~~~~~~~~~~~~~~  close program with escape key  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
         self.master.bind('<Escape>', lambda e: self.master.destroy())
-        self.frame1.bind('<Button-1>', self.enable_button)
-        self.frame2.bind('<Button-1>', self.enable_button)
-        self.frame3.bind('<Button-1>', self.enable_button)
-        self.frame4.bind('<Button-1>', self.enable_button)
+        # self.frame1.bind('<Button-1>', self.enable_button)
+        # self.frame2.bind('<Button-1>', self.enable_button)
+        # self.frame3.bind('<Button-1>', self.enable_button)
+        # self.frame4.bind('<Button-1>', self.enable_button)
 
     '''
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GUI Methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     '''
+    def clearEntry(self):
+        self.TM9_entry_var.set('')
+        self.blockNum_entry_var.set('')
+        self.numPieces_entry_var.set('')
+        self.WeighIN.config(state='disabled',bg='grey')
 
-    def enable_button(self,event):
+    def activate_weighIN(self,event):
+        self.WeighIN.config(state='normal',bg='green')
 
-        if event == "<<ListboxSelect>>":
-            self.WeighIN.config(state='disabled',bg='grey')
-            self.WeighOUT.config(state='normal',bg='green')
-        else:
-            self.WeighIN.config(state='normal',bg='green')
-            self.WeighOUT.config(state='disabled',bg='grey')
+    # def enable_button(self,event):
+    #
+    #     if event == "<<ListboxSelect>>":
+    #         self.WeighIN.config(state='disabled',bg='grey')
+    #         self.WeighOUT.config(state='normal',bg='green')
+    #     else:
+    #         self.WeighIN.config(state='normal',bg='green')
+    #         self.WeighOUT.config(state='disabled',bg='grey')
 
     def enable_weighOut(self,event):
         self.WeighIN.config(state='disabled',bg='grey')
@@ -276,7 +288,7 @@ class GUIatFrontDesk:
         self.date_now = str(datetime.datetime.now().date())
         self.timeIn_now = str(datetime.datetime.now().strftime("%H:%M:%S"))
 
-        cur1.execute(sql.SQL("SELECT poploadslip,count FROM testscale WHERE {} = %s;").format(sql.Identifier('poploadslip')), (self.popDD_val.get(),))
+        cur1.execute(sql.SQL("SELECT poploadslip,count FROM barkies2018_db WHERE {} = %s;").format(sql.Identifier('poploadslip')), (self.popDD_val.get(),))
         a = cur1.fetchall()
 
         try:
@@ -330,12 +342,12 @@ class GUIatFrontDesk:
         # values = [Weighin_dict[column] for column in columns]
         values = [None if Weighin_dict[key] == '' else Weighin_dict[key] for key in columns]
 
-        insert_statement = 'INSERT INTO testscale (%s) VALUES %s'
+        insert_statement = 'INSERT INTO barkies2018_db (%s) VALUES %s'
 
         #check if previous TM9 same was entered
-        check_statement = 'SELECT tm9_ticket FROM testscale'
+        check_statement = 'SELECT tm9_ticket FROM barkies2018_db'
 
-        cur1.execute('SELECT tm9_ticket FROM testscale')
+        cur1.execute('SELECT tm9_ticket FROM barkies2018_db')
         check_tm9 = cur1.fetchall()
 
         keys = ['tm9_ticket','blocknum','numpcsreceived']
@@ -366,7 +378,7 @@ class GUIatFrontDesk:
                 self.TrucksInYard.delete(trucknum_indx)
 
 
-
+        self.WeighIN.config(state='disabled',bg='grey')
         self.update_colors_truck()
         cur1.close()
 
@@ -430,7 +442,7 @@ class GUIatFrontDesk:
         columns = WeighOut_dict.keys()
         values = [WeighOut_dict[column] for column in columns]
 
-        insert_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
+        insert_statement = 'UPDATE barkies2018_db SET (%s) = %s WHERE tm9_ticket = %s;'
         strng = self.TM9_entry.get()
 
         cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
@@ -546,7 +558,7 @@ class GUIatFrontDesk:
         rows=sorted(rows)
         sorted_list = map(list, itertools.izip_longest(*rows))
         if table == 'owner_db':
-            table1 = 'testscale'
+            table1 = 'barkies2018_db'
             query = 'select loggingco from "{}"'.format(table1)
             cur1.execute(query)
             rows = cur1.fetchall()
@@ -593,7 +605,7 @@ class GUIatFrontDesk:
     def create_place_button(self, frme ,txt_name, rownum, columnum, fnt,pdy,pdx,dimmh,dimmw,stcky,cmmd):
 
         name_button = Button(frme, text=txt_name, command = cmmd)
-        name_button.config(height=dimmh, width=dimmw, bg='green', activebackground='red',font=fnt)
+        name_button.config(height=dimmh, width=dimmw, activebackground='red',font=fnt)
         name_button.grid(row=rownum, column=columnum, pady=pdy, padx=pdx, sticky = stcky)
         return name_button
 

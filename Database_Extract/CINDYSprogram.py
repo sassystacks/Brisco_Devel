@@ -13,7 +13,7 @@ class CindyProgram:
     def __init__(self,master):
 
         cwd = os.getcwd()
-        self.userDir = 'CindyHallett'
+        self.userDir = 'Cindy'
 
         self.master = master
 
@@ -25,7 +25,7 @@ class CindyProgram:
         paddyTitle = (0,10)
         self.ip_add = '192.168.0.200'
         self.psswd = 'coffeegood'
-        self.table = 'testscale'
+        self.table = 'barkies2018_db'
         self.TopDir = 'Cindys Awesome Folder'
         self.Connect_Brisco_DB = Connect_DB('postgres','postgres',self.ip_add,self.psswd)
 
@@ -380,7 +380,7 @@ class CindyProgram:
         else:
             final_replace = is_int[0]
 
-        sql_statement = 'UPDATE testscale SET (%s) = %s WHERE tm9_ticket = %s;'
+        sql_statement = 'UPDATE barkies2018_db SET (%s) = %s WHERE tm9_ticket = %s;'
 
         cur.execute(sql_statement, (AsIs(val_to_chng), (get_val,), TM9_strng))
 
