@@ -255,10 +255,10 @@ class GUIatFrontDesk:
         self.blockNum_entry_var.set('')
         self.numPieces_entry_var.set('')
         self.WeighIN.config(state='disabled',bg='grey')
-
+	self.WeighOUT.config(state='disabled',bg='grey')
     def activate_weighIN(self,event):
         self.WeighIN.config(state='normal',bg='green')
-
+	self.WeighOUT.config(state='disabled',bg='grey')
     # def enable_button(self,event):
     #
     #     if event == "<<ListboxSelect>>":
@@ -377,7 +377,7 @@ class GUIatFrontDesk:
                 del self.Lst_truckInfo[trucknum_indx]
                 self.TrucksInYard.delete(trucknum_indx)
 
-
+	self.WeighOUT.config(state='disabled',bg='grey')
         self.WeighIN.config(state='disabled',bg='grey')
         self.update_colors_truck()
         cur1.close()
@@ -448,7 +448,7 @@ class GUIatFrontDesk:
         cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
 
         self.WeighOUT.config(state='disabled',bg='grey')
-        self.WeighIN.config(state='normal',bg='green')
+        self.WeighIN.config(state='disabled',bg='grey')
         self.update_colors_truck()
         cur1.close()
 
