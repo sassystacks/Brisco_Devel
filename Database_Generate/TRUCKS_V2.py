@@ -15,8 +15,8 @@ class GUIatFrontDesk:
         from PIL import Image, ImageTk
         self.master = master
 
-        self.ip_add = 'localhost'
-        self.psswd  = 'coffeegood'
+        self.ip_add = '192.168.1.214'
+        self.psswd  = 'crunchyAAA32'
 
         self.init_list_truck = self.initializeLists('truckers_db')
         self.init_list_owner = self.initializeLists('owner_db')
@@ -621,11 +621,7 @@ def main():
     root = Tk()
     mainApp = GUIatFrontDesk(root)
     root.attributes('-fullscreen',True)
-<<<<<<< HEAD
     #root.geometry("1200x500")
-=======
-    # root.geometry("1200x500")
->>>>>>> 1e6d81e10d9c5ac2b147712311f2d82adaa22e47
     root.mainloop()
 
 if __name__ == '__main__':
