@@ -255,10 +255,10 @@ class GUIatFrontDesk:
         self.blockNum_entry_var.set('')
         self.numPieces_entry_var.set('')
         self.WeighIN.config(state='disabled',bg='grey')
-
+	self.WeighOUT.config(state='disabled',bg='grey')
     def activate_weighIN(self,event):
         self.WeighIN.config(state='normal',bg='green')
-
+	self.WeighOUT.config(state='disabled',bg='grey')
     # def enable_button(self,event):
     #
     #     if event == "<<ListboxSelect>>":
@@ -377,7 +377,7 @@ class GUIatFrontDesk:
                 del self.Lst_truckInfo[trucknum_indx]
                 self.TrucksInYard.delete(trucknum_indx)
 
-
+	self.WeighOUT.config(state='disabled',bg='grey')
         self.WeighIN.config(state='disabled',bg='grey')
         self.update_colors_truck()
         cur1.close()
@@ -448,7 +448,7 @@ class GUIatFrontDesk:
         cur1.execute(insert_statement, (AsIs(','.join(columns)), tuple(values), strng))
 
         self.WeighOUT.config(state='disabled',bg='grey')
-        self.WeighIN.config(state='normal',bg='green')
+        self.WeighIN.config(state='disabled',bg='grey')
         self.update_colors_truck()
         cur1.close()
 
@@ -621,11 +621,7 @@ def main():
     root = Tk()
     mainApp = GUIatFrontDesk(root)
     root.attributes('-fullscreen',True)
-<<<<<<< HEAD
     #root.geometry("1200x500")
-=======
-    # root.geometry("1200x500")
->>>>>>> 1e6d81e10d9c5ac2b147712311f2d82adaa22e47
     root.mainloop()
 
 if __name__ == '__main__':
