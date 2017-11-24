@@ -242,10 +242,6 @@ class GUIatFrontDesk:
         ~~~~~~~~~~~~~~~  close program with escape key  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         '''
         self.master.bind('<Escape>', lambda e: self.master.destroy())
-        # self.frame1.bind('<Button-1>', self.enable_button)
-        # self.frame2.bind('<Button-1>', self.enable_button)
-        # self.frame3.bind('<Button-1>', self.enable_button)
-        # self.frame4.bind('<Button-1>', self.enable_button)
 
     '''
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GUI Methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -255,18 +251,12 @@ class GUIatFrontDesk:
         self.blockNum_entry_var.set('')
         self.numPieces_entry_var.set('')
         self.WeighIN.config(state='disabled',bg='grey')
-	self.WeighOUT.config(state='disabled',bg='grey')
+	    self.WeighOUT.config(state='disabled',bg='grey')
+
     def activate_weighIN(self,event):
         self.WeighIN.config(state='normal',bg='green')
 	self.WeighOUT.config(state='disabled',bg='grey')
-    # def enable_button(self,event):
-    #
-    #     if event == "<<ListboxSelect>>":
-    #         self.WeighIN.config(state='disabled',bg='grey')
-    #         self.WeighOUT.config(state='normal',bg='green')
-    #     else:
-    #         self.WeighIN.config(state='normal',bg='green')
-    #         self.WeighOUT.config(state='disabled',bg='grey')
+
 
     def enable_weighOut(self,event):
         self.WeighIN.config(state='disabled',bg='grey')
